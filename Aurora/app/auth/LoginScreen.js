@@ -73,7 +73,7 @@ const LoginScreen = () => {
         <MaterialCommunityIcons
           name="email-outline"
           size={24}
-          color="black"
+          color="#000000"
           style={{ paddingLeft: 7, paddingRight: 5 }}
         />
         <TextInput
