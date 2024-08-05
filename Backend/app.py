@@ -1,31 +1,38 @@
 import requests
 
-# URL for the API endpoint
-url = 'https://artistic-sunbird-actively.ngrok-free.app/api/generate'
+url = 'https://artistic-sunbird-actively.ngrok-free.app/api/chat'
 
-def make_request(prompt):
+modelName = input("enter the doctor name : ")
+
+def make_request(messages):
     data = {
-        "model": "Shailesh714/emotion",
-        "prompt": prompt,
-        "stream": False
+        "model": modelName,
+        "messages": messages, 
+        "stream": False,
+
     }
     response = requests.post(url, json=data)
     if response.status_code == 200:
-        return response.json().get("response", "No response received")
+        return response.json()
     else:
         return f"Error: {response.status_code}, {response.text}"
 
-#load model
-make_request("")       
+response = make_request("")
+print(response)       
 
 def main():
+    messages = []
     while True:
         prompt = input("You: ")
         if prompt.lower() == 'exit':
             print("Exiting chat.")
             break
-        response = make_request(prompt)
-        print("Bot:", response)
+        messages.append({"role": "user", "content": prompt})
+        response = make_request(messages[-15:])
+        messages.append({"role": "assistant", "content": response['message']['content']})
+        print("Bot:", response['message']['content']) 
 
 if __name__ == "__main__":
     main()
+
+
