@@ -1,24 +1,21 @@
 import requests
+import json
 
 url = 'https://artistic-sunbird-actively.ngrok-free.app/api/chat'
 
-modelName = input("enter the doctor name : ")
+modelName = input("Enter the doctor name: ")
 
 def make_request(messages):
     data = {
         "model": modelName,
         "messages": messages, 
-        "stream": False,
-
+        "stream": True,  # Enable streaming
     }
-    response = requests.post(url, json=data)
+    response = requests.post(url, json=data, stream=True)
     if response.status_code == 200:
-        return response.json()
+        return response
     else:
         return f"Error: {response.status_code}, {response.text}"
-
-response = make_request("")
-print(response)       
 
 def main():
     messages = []
@@ -29,10 +26,18 @@ def main():
             break
         messages.append({"role": "user", "content": prompt})
         response = make_request(messages[-15:])
-        messages.append({"role": "assistant", "content": response['message']['content']})
-        print("Bot:", response['message']['content']) 
+        if isinstance(response, str):  # Check if an error occurred
+            print(response)
+        else:
+            print("Bot: ", end="", flush=True)
+            for chunk in response.iter_content(chunk_size=8192):
+                if chunk:
+                    try:
+                        data = json.loads(chunk.decode('utf-8'))
+                        print(data['message']['content'], end="", flush=True)
+                    except json.JSONDecodeError:
+                        continue
+            print()  # Print a newline at the end of the response
 
 if __name__ == "__main__":
     main()
-
-
