@@ -12,6 +12,8 @@ pid=$!
 wait $pid
 
 echo "modelSetup.sh has completed."
+
+ngrok config add-authtoken 2fb0g0mRnwBSSNVgVy8lBrhJF8M_2R1xDsvtZjMpHGFe7DvkZ
 # Install Python packages
 pip install ngrok pyngrok requests accelerate flask
 

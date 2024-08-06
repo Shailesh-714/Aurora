@@ -20,7 +20,7 @@ ollama_process = start_process(ollama_command)
 
 time.sleep(10)  # Adjust as necessary
 os.environ["OLLAMA_HOST"] = "https://artistic-sunbird-actively.ngrok-free.app/"
-
+time.sleep(1)
 
 # Start the chatbot application
 print("Starting chatbot application...")
