@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Install Ollama
-curl -fsSL https://ollama.com/install.sh | sed 's#https://ollama.com/download#https://github.com/jmorganca/ollama/releases/download/v0.1.27#' | sh
+wget -qO- https://ollama.com/install.sh | sed 's#https://ollama.com/download#https://github.com/jmorganca/ollama/releases/download/v0.1.27#' | sh
 
 # Install Python packages
 pip install requests accelerate
