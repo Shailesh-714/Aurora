@@ -1,6 +1,5 @@
 import { Image, useWindowDimensions, SafeAreaView } from "react-native";
-
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import {
   View,
@@ -41,6 +40,28 @@ const ChatScreen = () => {
       setInputText("");
     }
   };
+
+  const renderMessage = ({ item }) => {
+    const isUserMessage = parseInt(item.id) > 4; // Assuming IDs for default messages are 1-4
+    return (
+      <View
+        style={[
+          styles.messageContainer,
+          isUserMessage ? styles.userMessage : styles.defaultMessage,
+        ]}
+      >
+        <Text
+          style={[
+            styles.messageText,
+            isUserMessage ? styles.userMessageText : styles.defaultMessageText,
+          ]}
+        >
+          {item.text}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View
@@ -95,12 +116,9 @@ const ChatScreen = () => {
         <View style={styles.container}>
           <FlatList
             data={messages}
-            renderItem={({ item }) => (
-              <View style={styles.messageContainer}>
-                <Text style={styles.messageText}>{item.text}</Text>
-              </View>
-            )}
+            renderItem={renderMessage}
             keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
           />
           <View style={styles.inputContainer}>
             <TextInput
@@ -110,7 +128,7 @@ const ChatScreen = () => {
               placeholder="Type your message"
             />
             <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-              <Text style={styles.sendButtonText}>Send</Text>
+              <Feather name="send" size={24} color="#8129a0" />
             </TouchableOpacity>
           </View>
         </View>
@@ -124,42 +142,48 @@ export default ChatScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f6f5f6",
     padding: 10,
   },
   messageContainer: {
     padding: 10,
-    backgroundColor: "#f0f0f0",
-    borderRadius: 5,
+    borderRadius: 10,
     marginVertical: 5,
+    width: "90%",
+  },
+  defaultMessage: {
+    backgroundColor: "#ead5f9",
+    alignSelf: "flex-start",
+  },
+  userMessage: {
+    backgroundColor: "#ca71e9",
+    alignSelf: "flex-end",
   },
   messageText: {
     fontSize: 16,
   },
+  defaultMessageText: {
+    color: "black",
+  },
+  userMessageText: {
+    color: "white",
+  },
   inputContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    borderTopWidth: 1,
-    borderTopColor: "#ddd",
-    padding: 10,
+    gap: 15,
+    paddingTop: 8,
+    paddingHorizontal: 7,
   },
   input: {
     flex: 1,
-    height: 40,
-    borderColor: "#ddd",
-    borderWidth: 1,
-    borderRadius: 5,
+
+    borderRadius: 30,
     paddingHorizontal: 10,
-    marginRight: 10,
+    backgroundColor: "white",
   },
   sendButton: {
-    backgroundColor: "#007bff",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  sendButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    backgroundColor: "white",
+    padding: 8,
+    borderRadius: 50,
   },
 });
