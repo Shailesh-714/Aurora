@@ -74,8 +74,6 @@ const ChatScreen = () => {
           justifyContent: "center",
           backgroundColor: "white",
           paddingBottom: 10,
-          borderBottomColor: "black",
-          borderBottomWidth: 0.3,
         }}
       >
         <View
@@ -149,17 +147,18 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 20,
     marginVertical: 5,
-    width: "90%",
   },
   defaultMessage: {
     backgroundColor: "#ead5f9",
     alignSelf: "flex-start",
+    width: "85%",
   },
   userMessage: {
     backgroundColor: "#ca71e9",
     alignSelf: "flex-end",
+    maxWidth: "85%",
   },
   messageText: {
     fontSize: 16,
