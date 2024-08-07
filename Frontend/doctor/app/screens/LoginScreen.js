@@ -308,7 +308,7 @@ const LoginScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, alignItems: "center", minHeight: height }}>
       <StatusBar style="dark" />
-      <View style={{ flex:1}}>
+      <View style={{ flex: 1 }}>
         <Animated.FlatList
           showsHorizontalScrollIndicator={false}
           data={optionList}
@@ -331,8 +331,6 @@ const LoginScreen = () => {
             const index = Math.round(
               event.nativeEvent.contentOffset.x / ITEM_SIZE
             );
-            const currentItem = optionList[index];
-            //setProviderId(currentItem.id);
           }}
           renderItem={({ item, index }) => {
             if (!item.icon) {
@@ -370,7 +368,12 @@ const LoginScreen = () => {
             });
             return (
               <View
-                style={{ width: ITEM_SIZE, height:height, padding: 10, justifyContent:"space-around" }}
+                style={{
+                  width: ITEM_SIZE,
+                  height: height,
+                  padding: 10,
+                  justifyContent: "space-around",
+                }}
               >
                 <Animated.View
                   style={{
@@ -384,7 +387,7 @@ const LoginScreen = () => {
                     gap: 5,
                     zIndex: 10,
                     top: 16,
-                    opacity:opacityBg,
+                    opacity: opacityBg,
                     ...Platform.select({
                       ios: {
                         shadowColor: "#000",
