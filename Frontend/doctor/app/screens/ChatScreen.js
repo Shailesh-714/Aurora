@@ -11,11 +11,11 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatScreen = () => {
-  const screenWidth = useWindowDimensions("window").width;
+  const screenWidth = useWindowDimensions().width;
   const [messages, setMessages] = useState([
     {
       id: "1",
@@ -32,19 +32,31 @@ const ChatScreen = () => {
     },
   ]);
   const [inputText, setInputText] = useState("");
+  const flatListRef = useRef(null);
 
   const sendMessage = () => {
     if (inputText.trim().length > 0) {
-      setMessages([
-        ...messages,
+      setMessages((prevMessages) => [
+        ...prevMessages,
         { id: Date.now().toString(), text: inputText },
       ]);
       setInputText("");
+      scrollToEnd();
     }
   };
 
+  const scrollToEnd = () => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  };
+
+  useEffect(() => {
+    scrollToEnd(); // Scroll to the end when the component first mounts or when messages change
+  }, [messages]);
+
   const renderMessage = ({ item }) => {
-    const isUserMessage = parseInt(item.id) > 4; // Assuming IDs for default messages are 1-4
+    const isUserMessage = parseInt(item.id) > 4;
     return (
       <View
         style={[
@@ -115,10 +127,12 @@ const ChatScreen = () => {
       >
         <View style={styles.container}>
           <FlatList
+            ref={flatListRef}
             data={messages}
             renderItem={renderMessage}
             keyExtractor={(item) => item.id}
             showsVerticalScrollIndicator={false}
+            onContentSizeChange={scrollToEnd} // Ensure it scrolls to the end when content size changes
           />
           <View style={styles.inputContainer}>
             <TextInput
@@ -177,7 +191,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-
     borderRadius: 30,
     paddingHorizontal: 10,
     backgroundColor: "white",
