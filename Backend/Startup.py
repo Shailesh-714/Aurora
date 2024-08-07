@@ -17,14 +17,20 @@ ngrok_process = start_process(ngrok_command)
 ollama_command = "ollama serve"
 ollama_process = start_process(ollama_command)
 
-
 time.sleep(10)  # Adjust as necessary
+
+process = subprocess.Popen(['bash', 'modelSetup.sh'])
+
+# Wait for the process to complete
+process.wait()
+
+# Print completion message
+print("modelSetup.sh has completed.")
+
 os.environ["OLLAMA_HOST"] = "https://artistic-sunbird-actively.ngrok-free.app/"
+print("OLLAMA_HOST set to https://artistic-sunbird-actively.ngrok-free.app/")
+time.sleep(1)
 
-
-# Start the chatbot application
-print("Starting chatbot application...")
-subprocess.call(["python", "app.py"])
 
 # Optional: Wait for processes to complete or handle termination signals
 try:

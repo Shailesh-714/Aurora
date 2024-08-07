@@ -10,6 +10,8 @@ const url = 'https://artistic-sunbird-actively.ngrok-free.app/api/chat';
 app.use(bodyParser.json());
 app.use(cors());
 
+app.post('/loadchat')
+
 app.post('/message', async (req, res) => {
   const { model, messages } = req.body;
 
