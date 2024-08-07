@@ -1,16 +1,14 @@
-import { Image, useWindowDimensions, SafeAreaView } from "react-native";
-import { Ionicons, Feather } from "@expo/vector-icons";
-import { useState } from "react";
-import {
-  View,
+import { Image, useWindowDimensions, View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   FlatList,
   KeyboardAvoidingView,
-  Platform,
-} from "react-native";
+  Platform, } from "react-native";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatScreen = () => {
   const screenWidth = useWindowDimensions("window").width;
