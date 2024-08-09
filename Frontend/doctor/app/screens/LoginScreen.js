@@ -14,12 +14,16 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 const { width, height } = Dimensions.get("window");
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import LottieView from "lottie-react-native";
-import { FadeIn, clamp } from "react-native-reanimated";
+import bg1 from "../assets/images/backgrounds/loginbg/bg1.png";
+import bg2 from "../assets/images/backgrounds/loginbg/bg2.png";
+import bg3 from "../assets/images/backgrounds/loginbg/bg3.png";
+import bg4 from "../assets/images/backgrounds/loginbg/bg4.png";
+import bg5 from "../assets/images/backgrounds/loginbg/bg5.jpg";
+import shape from "../assets/images/backgrounds/loginbg/shape.png";
 
 const SPACING = 10;
-const ITEM_SIZE = Platform.OS === "ios" ? width * 0.35 : width * 0.35;
+const ITEM_SIZE = Platform.OS === "ios" ? width  : width ;
 const EMPTY_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
 const LoginScreen = () => {
@@ -27,7 +31,6 @@ const LoginScreen = () => {
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [register, setRegister] = React.useState(false);
-  const fadeAnime = React.useRef(new Animated.Value(1)).current;
 
   const optionList = [
     { id: 0 },
@@ -35,6 +38,7 @@ const LoginScreen = () => {
       id: 1,
       name: "Register",
       icon: require("../assets/images/icons/register.png"),
+      bg: require("../assets/images/backgrounds/loginbg/bg4.png"),
     },
     { id: 2, name: "Login", icon: require("../assets/images/icons/login.png") },
     {
@@ -55,8 +59,18 @@ const LoginScreen = () => {
     { id: 6 },
   ];
 
+  const tips = [
+    "",
+    "Stay Hydrated: Drinking enough water supports digestion, circulation, and temperature regulation.",
+    "Get Regular Checkups: Early detection of health issues can lead to more effective treatment.",
+    "Eat the Rainbow: A variety of colorful fruits and vegetables provides essential vitamins and antioxidants.",
+    "Wash Your Hands: Proper hand hygiene can prevent the spread of infections and illness.",
+    "Prioritize Sleep: Quality sleep is vital for immune function, mental clarity, and overall health.",
+    "",
+  ];
+
   const authOptions = [
-    <View style={{ width: 270 }}>
+    <View style={{ minWidth: "80%", paddingTop: "1.5%" }}>
       <View
         style={{
           flexDirection: "row",
@@ -72,7 +86,7 @@ const LoginScreen = () => {
         <MaterialCommunityIcons
           name="email-outline"
           size={24}
-          color="#000000"
+          color="black"
           style={{ paddingLeft: 7, paddingRight: 5 }}
         />
         <TextInput
@@ -111,11 +125,9 @@ const LoginScreen = () => {
         />
       </View>
       <TouchableOpacity>
-        <LinearGradient
-          colors={["#ffccd7", "#ff005b"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+        <View
           style={{
+            backgroundColor: "#A6B0F2",
             alignItems: "center",
             padding: 8,
             marginVertical: 5,
@@ -125,7 +137,7 @@ const LoginScreen = () => {
           <Text style={{ color: "white", fontSize: 15, fontWeight: "600" }}>
             Register
           </Text>
-        </LinearGradient>
+        </View>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setRegister(false)}
@@ -137,7 +149,7 @@ const LoginScreen = () => {
         </Text>
       </TouchableOpacity>
     </View>,
-    <View style={{ width: 270 }}>
+    <View style={{ minWidth: "80%", paddingTop: "1.5%" }}>
       <View
         style={{
           flexDirection: "row",
@@ -192,11 +204,9 @@ const LoginScreen = () => {
         />
       </View>
       <TouchableOpacity>
-        <LinearGradient
-          colors={["#ffccd7", "#ff005b"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+        <View
           style={{
+            backgroundColor: "#A6B0F2",
             alignItems: "center",
             padding: 8,
             marginVertical: 5,
@@ -206,7 +216,7 @@ const LoginScreen = () => {
           <Text style={{ color: "white", fontSize: 15, fontWeight: "600" }}>
             Login
           </Text>
-        </LinearGradient>
+        </View>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => setRegister(true)}
@@ -218,19 +228,28 @@ const LoginScreen = () => {
         </Text>
       </TouchableOpacity>
     </View>,
-    <View>
+    <View style={{ maxWidth: "90%", minWidth:"90%" }}>
       <TouchableOpacity
         style={{
-          width: 270,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-evenly",
-          borderWidth: 1,
-          borderColor: "#f2f2f2",
           borderRadius: 5,
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
+          backgroundColor:"white",
+          ...Platform.select({
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.1,
+              
+            },
+            android: {
+              elevation: 2.5,
+            },
+          }),
         }}
       >
         <Image source={optionList[3].icon} style={{ width: 30, height: 30 }} />
@@ -238,27 +257,36 @@ const LoginScreen = () => {
           SignIn with Google Account
         </Text>
       </TouchableOpacity>
-      <View style={{ width: 270, alignItems: "center", marginTop: 5 }}>
-        <Text style={{ fontSize: 12, letterSpacing: 1.1, lineHeight: 18 }}>
+      <View style={{ alignItems: "center", marginTop: 5, }}>
+        <Text style={{ fontSize: 12, letterSpacing: 1, lineHeight: 18, }}>
           By signing up, you agree to our{" "}
           <Text style={{ color: "#008FFF" }}>Terms of Service</Text> and{" "}
           <Text style={{ color: "#008FFF" }}>Privacy Policy</Text>.
         </Text>
       </View>
     </View>,
-    <View>
+    <View style={{ maxWidth: "90%", minWidth:"90%" }}>
       <TouchableOpacity
         style={{
-          width: 270,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-evenly",
-          borderWidth: 1,
-          borderColor: "#f2f2f2",
           borderRadius: 5,
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
+          backgroundColor:"white",
+          ...Platform.select({
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.1,
+              
+            },
+            android: {
+              elevation: 2.5,
+            },
+          }),
         }}
       >
         <Image source={optionList[4].icon} style={{ width: 30, height: 30 }} />
@@ -266,18 +294,17 @@ const LoginScreen = () => {
           SignIn with Facebook Account
         </Text>
       </TouchableOpacity>
-      <View style={{ width: 270, alignItems: "center", marginTop: 5 }}>
-        <Text style={{ fontSize: 12, letterSpacing: 1.1, lineHeight: 18 }}>
+      <View style={{ alignItems: "center", marginTop: 5 }}>
+        <Text style={{ fontSize: 12, letterSpacing: 1, lineHeight: 18 }}>
           By signing up, you agree to our{" "}
           <Text style={{ color: "#008FFF" }}>Terms of Service</Text> and{" "}
           <Text style={{ color: "#008FFF" }}>Privacy Policy</Text>.
         </Text>
       </View>
     </View>,
-    <View>
+    <View style={{ maxWidth: "90%", minWidth:"90%" }}>
       <TouchableOpacity
         style={{
-          width: 270,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-evenly",
@@ -287,6 +314,18 @@ const LoginScreen = () => {
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
+          backgroundColor:"white",
+          ...Platform.select({
+            ios: {
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.1,
+              
+            },
+            android: {
+              elevation: 2.5,
+            },
+          }),
         }}
       >
         <Image source={optionList[5].icon} style={{ width: 30, height: 30 }} />
@@ -294,8 +333,8 @@ const LoginScreen = () => {
           SignIn with Twitter X Account
         </Text>
       </TouchableOpacity>
-      <View style={{ width: 270, alignItems: "center", marginTop: 5 }}>
-        <Text style={{ fontSize: 12, letterSpacing: 1.1, lineHeight: 18 }}>
+      <View style={{ alignItems: "center", marginTop: 5 }}>
+        <Text style={{ fontSize: 12, letterSpacing: 1, lineHeight: 18 }}>
           By signing up, you agree to our{" "}
           <Text style={{ color: "#008FFF" }}>Terms of Service</Text> and{" "}
           <Text style={{ color: "#008FFF" }}>Privacy Policy</Text>.
@@ -305,86 +344,153 @@ const LoginScreen = () => {
   ];
 
   const scrollX = React.useRef(new Animated.Value(0)).current;
+
+  const renderBackgrounds = () => {
+    return backgroundImages.map((bg, index) => {
+      const inputRange = [
+        (index - 1) * ITEM_SIZE,
+        index * ITEM_SIZE,
+        (index + 1) * ITEM_SIZE,
+      ];
+
+      const translateX = scrollX.interpolate({
+        inputRange,
+        outputRange: [-width, 0, width],
+        extrapolate: "clamp",
+      });
+
+      return (
+        <Animated.Image
+          key={`bg-${index}`}
+          source={bg}
+          style={{
+            position: "absolute",
+            width: width,
+            height: height,
+            transform: [{ translateX }],
+            zIndex: -1,
+          }}
+          resizeMode="cover"
+        />
+      );
+    });
+  };
+
+  const backgroundImages = [bg1, bg2, bg3, bg4, bg5];
   return (
     <SafeAreaView style={{ flex: 1, alignItems: "center", minHeight: height }}>
-      <StatusBar style="dark" />
-      <View style={{ flex: 1 }}>
-        <Animated.FlatList
-          showsHorizontalScrollIndicator={false}
-          data={optionList}
-          keyExtractor={(item) => item.id.toString()}
-          horizontal
-          bounces={false}
-          decelerationRate={Platform.OS === "ios" ? 0 : 0.9}
-          renderToHardwareTextureAndroid
-          contentContainerStyle={{
-            alignItems: "center",
-          }}
-          snapToInterval={ITEM_SIZE}
-          snapToAlignment="start"
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: true }
-          )}
-          scrollEventThrottle={16}
-          onMomentumScrollEnd={(event) => {
-            const index = Math.round(
-              event.nativeEvent.contentOffset.x / ITEM_SIZE
-            );
-          }}
-          renderItem={({ item, index }) => {
-            if (!item.icon) {
-              return <View style={{ width: EMPTY_ITEM_SIZE }} />;
-            }
+      {renderBackgrounds()}
+      <Animated.FlatList
+        showsHorizontalScrollIndicator={false}
+        data={optionList}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        bounces={false}
+        decelerationRate={Platform.OS === "ios" ? 0 : 0.9}
+        renderToHardwareTextureAndroid
+        contentContainerStyle={{
+          alignItems: "center",
+        }}
+        snapToInterval={ITEM_SIZE}
+        snapToAlignment="start"
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
+        onMomentumScrollEnd={(event) => {
+          const index = Math.round(
+            event.nativeEvent.contentOffset.x / ITEM_SIZE
+          );
+        }}
+        renderItem={({ item, index }) => {
+          if (!item.icon) {
+            return <View style={{ width: EMPTY_ITEM_SIZE }} />;
+          }
 
-            const inputRange = [
-              (index - 2) * ITEM_SIZE,
-              (index - 1) * ITEM_SIZE,
-              index * ITEM_SIZE,
-            ];
+          const inputRange = [
+            (index - 2) * ITEM_SIZE,
+            (index - 1) * ITEM_SIZE,
+            index * ITEM_SIZE,
+          ];
 
-            const translateY = scrollX.interpolate({
-              inputRange,
-              outputRange: [80, 0, 80],
-              extrapolate: "clamp",
-            });
+          const translateY = scrollX.interpolate({
+            inputRange,
+            outputRange: [80, 0, 80],
+            extrapolate: "clamp",
+          });
 
-            const scale = scrollX.interpolate({
-              inputRange,
-              outputRange: [0.5, 1, 0.5],
-              extrapolate: "clamp",
-            });
+          const scale = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.5, 1, 0.5],
+            extrapolate: "clamp",
+          });
 
-            const opacity = scrollX.interpolate({
-              inputRange,
-              outputRange: [0.7, 1, 0.7],
-              extrapolate: "clamp",
-            });
+          const opacity = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.7, 1, 0.7],
+            extrapolate: "clamp",
+          });
 
-            const opacityBg = scrollX.interpolate({
-              inputRange,
-              outputRange: [0, 1, 0],
-              extrapolate: "clamp",
-            });
-            return (
-              <View
+          const opacityBg = scrollX.interpolate({
+            inputRange,
+            outputRange: [0, 1, 0],
+            extrapolate: "clamp",
+          });
+          const scaleLog = scrollX.interpolate({
+            inputRange,
+            outputRange: [0, 1, 0],
+            extrapolate: "clamp",
+          });
+          
+          return (
+            <Animated.View
+              style={{
+                width: ITEM_SIZE,
+                minHeight: height,
+                padding: 10,
+                justifyContent: "space-around",
+              }}
+            >
+              <Animated.View
                 style={{
-                  width: ITEM_SIZE,
-                  height: height,
-                  padding: 10,
-                  justifyContent: "space-around",
+                  width: width * 0.8,
+                  alignSelf: "center",
+                  opacity: opacityBg,
+                  backgroundColor: "rgba(255,255,255,0.4)",
+                  borderWidth: 2,
+                  borderColor: "white",
+                  borderRadius: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: "white",
+                    fontSize: 16,
+                    fontWeight: "600",
+                  }}
+                >
+                  TIPS💡{tips[item.id]}
+                </Text>
+              </Animated.View>
+              <Animated.View
+                style={{
+                  maxHeight: height * 0.2,
+                  minHeight: height * 0.2,
+                  justifyContent: "center",
+                  transform:[{scale:scaleLog}],
                 }}
               >
                 <Animated.View
                   style={{
-                    flexDirection: "row",
                     backgroundColor: "white",
                     paddingVertical: 7,
                     paddingHorizontal: 15,
                     borderRadius: 50,
                     alignItems: "center",
+                    alignSelf:"center",
                     justifyContent: "center",
-                    gap: 5,
                     zIndex: 10,
                     top: 16,
                     opacity: opacityBg,
@@ -392,7 +498,7 @@ const LoginScreen = () => {
                       ios: {
                         shadowColor: "#000",
                         shadowOffset: { width: 0, height: 1 },
-                        shadowOpacity: 0.18,
+                        shadowOpacity: 0.1,
                         shadowRadius: 3.84,
                       },
                       android: {
@@ -405,39 +511,37 @@ const LoginScreen = () => {
                     {item.name}
                   </Text>
                 </Animated.View>
-                <View
-                  style={{ maxHeight: height * 0.2, minHeight: height * 0.2 }}
+                <Animated.View
+                  style={{
+                    width: width * 0.85,
+                    backgroundColor: "white",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    borderRadius: 20,
+                    paddingTop: 15,
+                    paddingBottom: 15,
+                    opacity: opacityBg,
+                    ...Platform.select({
+                      ios: {
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                      },
+                      android: {
+                        elevation: 5,
+                      },
+                    }),
+                  }}
                 >
-                  <Animated.View
-                    style={{
-                      width: width * 0.9,
-                      minHeight: 150,
-                      backgroundColor: "white",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      alignSelf: "center",
-                      borderRadius: 20,
-                      paddingVertical: 25,
-                      opacity: opacityBg,
-                      ...Platform.select({
-                        ios: {
-                          shadowColor: "#000",
-                          shadowOffset: { width: 0, height: 2 },
-                          shadowOpacity: 0.25,
-                          shadowRadius: 3.84,
-                        },
-                        android: {
-                          elevation: 5,
-                        },
-                      }),
-                    }}
-                  >
-                    <View style={{ marginTop: 10 }}>
-                      {authOptions[item.id - 1]}
-                    </View>
-                  </Animated.View>
-                </View>
+                  <View style={{ marginTop: 10 }}>
+                    {authOptions[item.id - 1]}
+                  </View>
+                </Animated.View>
+              </Animated.View>
 
+              <View>
                 <Animated.View
                   style={{
                     marginHorizontal: SPACING,
@@ -471,10 +575,21 @@ const LoginScreen = () => {
                   </ImageBackground>
                 </Animated.View>
               </View>
-            );
-          }}
-        />
-      </View>
+            </Animated.View>
+          );
+        }}
+      />
+      <Image
+        source={shape}
+        resizeMode="contain"
+        style={{
+          position: "absolute",
+          width: width,
+          maxHeight: width * (700 / 1080),
+          bottom: 0,
+          zIndex: -1,
+        }}
+      />
     </SafeAreaView>
   );
 };
