@@ -23,7 +23,7 @@ import bg5 from "../assets/images/backgrounds/loginbg/bg5.jpg";
 import shape from "../assets/images/backgrounds/loginbg/shape.png";
 
 const SPACING = 10;
-const ITEM_SIZE = Platform.OS === "ios" ? width * 0.35 : width * 0.35;
+const ITEM_SIZE = Platform.OS === "ios" ? width  : width ;
 const EMPTY_ITEM_SIZE = (width - ITEM_SIZE) / 2;
 
 const LoginScreen = () => {
@@ -434,7 +434,7 @@ const LoginScreen = () => {
 
           const opacityBg = scrollX.interpolate({
             inputRange,
-            outputRange: [1, 1, 1],
+            outputRange: [0, 1, 0],
             extrapolate: "clamp",
           });
           const scaleLog = scrollX.interpolate({
@@ -479,19 +479,18 @@ const LoginScreen = () => {
                   maxHeight: height * 0.2,
                   minHeight: height * 0.2,
                   justifyContent: "center",
-                 
+                  transform:[{scale:scaleLog}],
                 }}
               >
                 <Animated.View
                   style={{
-                    flexDirection: "row",
                     backgroundColor: "white",
                     paddingVertical: 7,
                     paddingHorizontal: 15,
                     borderRadius: 50,
                     alignItems: "center",
+                    alignSelf:"center",
                     justifyContent: "center",
-                    gap: 5,
                     zIndex: 10,
                     top: 16,
                     opacity: opacityBg,
