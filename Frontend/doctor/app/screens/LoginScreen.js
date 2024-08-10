@@ -11,20 +11,152 @@ import {
   TextInput,
   ImageBackground,
 } from "react-native";
+import { useAnimatedRef } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 const { width, height } = Dimensions.get("window");
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, FontAwesome6, AntDesign } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import bg1 from "../assets/images/backgrounds/loginbg/bg1.png";
 import bg2 from "../assets/images/backgrounds/loginbg/bg2.png";
 import bg3 from "../assets/images/backgrounds/loginbg/bg3.png";
 import bg4 from "../assets/images/backgrounds/loginbg/bg4.png";
-import bg5 from "../assets/images/backgrounds/loginbg/bg5.jpg";
+import bg5 from "../assets/images/backgrounds/loginbg/bg5.png";
 import shape from "../assets/images/backgrounds/loginbg/shape.png";
 
 const SPACING = 10;
-const ITEM_SIZE = Platform.OS === "ios" ? width  : width ;
+const ITEM_SIZE = Platform.OS === "ios" ? width : width;
+const ICON_SIZE = width * 0.35;
 const EMPTY_ITEM_SIZE = (width - ITEM_SIZE) / 2;
+const EMPTY_ICON_SIZE = (width - ICON_SIZE) / 2;
+
+const RenderLogin = ({ optionList, scrollX }) => {
+  const flatListRef = useAnimatedRef();
+
+  React.useEffect(() => {
+    const listener = scrollX.addListener(({ value }) => {
+      if (flatListRef.current) {
+        flatListRef.current.scrollToOffset({
+          offset: value * 0.35,
+          animated: false,
+        });
+      }
+    });
+
+    return () => {
+      scrollX.removeListener(listener);
+    };
+  }, [scrollX]);
+
+  return (
+    <View
+      style={{
+        position: "absolute",
+        bottom: 0,
+        zIndex: -1,
+        maxHeight: width * (700 / 1080),
+        minHeight: width * (700 / 1080),
+      }}
+    >
+      <Animated.FlatList
+        ref={flatListRef}
+        showsHorizontalScrollIndicator={false}
+        data={optionList}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        bounces={false}
+        decelerationRate={Platform.OS === "ios" ? 0 : 0.9}
+        renderToHardwareTextureAndroid
+        contentContainerStyle={{
+          alignItems: "center",
+        }}
+        snapToInterval={ICON_SIZE}
+        snapToAlignment="start"
+        // Remove the onScroll prop as we are controlling scroll programmatically
+        scrollEventThrottle={16}
+        renderItem={({ item, index }) => {
+          if (!item.icon) {
+            return <View style={{ width: EMPTY_ICON_SIZE }} />;
+          }
+
+          const inputRange = [
+            (index - 2) * ITEM_SIZE,
+            (index - 1) * ITEM_SIZE,
+            index * ITEM_SIZE,
+          ];
+
+          const translateY = scrollX.interpolate({
+            inputRange,
+            outputRange: [80, 0, 80],
+            extrapolate: "clamp",
+          });
+
+          const scale = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.5, 1, 0.5],
+            extrapolate: "clamp",
+          });
+
+          const opacity = scrollX.interpolate({
+            inputRange,
+            outputRange: [0.7, 1, 0.7],
+            extrapolate: "clamp",
+          });
+
+          const opacityBg = scrollX.interpolate({
+            inputRange,
+            outputRange: [0, 1, 0],
+            extrapolate: "clamp",
+          });
+
+          return (
+            <Animated.View
+              style={{
+                width: ICON_SIZE,
+                padding: 10,
+                justifyContent: "space-around",
+              }}
+            >
+              <View>
+                <Animated.View
+                  style={{
+                    marginHorizontal: SPACING,
+                    padding: SPACING * 2,
+                    alignItems: "center",
+                    transform: [{ scale }, { translateY }],
+                    opacity,
+                  }}
+                >
+                  <ImageBackground
+                    source={item.icon}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 100,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Animated.View style={{ opacity: opacityBg }}>
+                      <LottieView
+                        source={require("../assets/Lottie/iconHighlight.json")}
+                        autoPlay
+                        loop
+                        style={{
+                          width: 120,
+                          height: 120,
+                        }}
+                      />
+                    </Animated.View>
+                  </ImageBackground>
+                </Animated.View>
+              </View>
+            </Animated.View>
+          );
+        }}
+      />
+    </View>
+  );
+};
 
 const LoginScreen = () => {
   const [providerId, setProviderId] = React.useState(0);
@@ -228,7 +360,7 @@ const LoginScreen = () => {
         </Text>
       </TouchableOpacity>
     </View>,
-    <View style={{ maxWidth: "90%", minWidth:"90%" }}>
+    <View style={{ maxWidth: "90%", minWidth: "90%" }}>
       <TouchableOpacity
         style={{
           flexDirection: "row",
@@ -238,13 +370,12 @@ const LoginScreen = () => {
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
-          backgroundColor:"white",
+          backgroundColor: "white",
           ...Platform.select({
             ios: {
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.1,
-              
             },
             android: {
               elevation: 2.5,
@@ -257,15 +388,15 @@ const LoginScreen = () => {
           SignIn with Google Account
         </Text>
       </TouchableOpacity>
-      <View style={{ alignItems: "center", marginTop: 5, }}>
-        <Text style={{ fontSize: 12, letterSpacing: 1, lineHeight: 18, }}>
+      <View style={{ alignItems: "center", marginTop: 5 }}>
+        <Text style={{ fontSize: 12, letterSpacing: 1, lineHeight: 18 }}>
           By signing up, you agree to our{" "}
           <Text style={{ color: "#008FFF" }}>Terms of Service</Text> and{" "}
           <Text style={{ color: "#008FFF" }}>Privacy Policy</Text>.
         </Text>
       </View>
     </View>,
-    <View style={{ maxWidth: "90%", minWidth:"90%" }}>
+    <View style={{ maxWidth: "90%", minWidth: "90%" }}>
       <TouchableOpacity
         style={{
           flexDirection: "row",
@@ -275,13 +406,12 @@ const LoginScreen = () => {
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
-          backgroundColor:"white",
+          backgroundColor: "white",
           ...Platform.select({
             ios: {
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.1,
-              
             },
             android: {
               elevation: 2.5,
@@ -302,7 +432,7 @@ const LoginScreen = () => {
         </Text>
       </View>
     </View>,
-    <View style={{ maxWidth: "90%", minWidth:"90%" }}>
+    <View style={{ maxWidth: "90%", minWidth: "90%" }}>
       <TouchableOpacity
         style={{
           flexDirection: "row",
@@ -314,13 +444,12 @@ const LoginScreen = () => {
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
-          backgroundColor:"white",
+          backgroundColor: "white",
           ...Platform.select({
             ios: {
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.1,
-              
             },
             android: {
               elevation: 2.5,
@@ -368,7 +497,7 @@ const LoginScreen = () => {
             width: width,
             height: height,
             transform: [{ translateX }],
-            zIndex: -1,
+            zIndex: -3,
           }}
           resizeMode="cover"
         />
@@ -380,6 +509,7 @@ const LoginScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, alignItems: "center", minHeight: height }}>
       {renderBackgrounds()}
+
       <Animated.FlatList
         showsHorizontalScrollIndicator={false}
         data={optionList}
@@ -442,143 +572,116 @@ const LoginScreen = () => {
             outputRange: [0, 1, 0],
             extrapolate: "clamp",
           });
-          
+
           return (
             <Animated.View
               style={{
                 width: ITEM_SIZE,
-                minHeight: height,
-                padding: 10,
-                justifyContent: "space-around",
+                minHeight: height
               }}
             >
-              <Animated.View
+              <View
                 style={{
-                  width: width * 0.8,
-                  alignSelf: "center",
-                  opacity: opacityBg,
-                  backgroundColor: "rgba(255,255,255,0.4)",
-                  borderWidth: 2,
-                  borderColor: "white",
-                  borderRadius: 10,
-                }}
-              >
-                <Text
-                  style={{
-                    textAlign: "center",
-                    color: "white",
-                    fontSize: 16,
-                    fontWeight: "600",
-                  }}
-                >
-                  TIPS💡{tips[item.id]}
-                </Text>
-              </Animated.View>
-              <Animated.View
-                style={{
-                  maxHeight: height * 0.2,
-                  minHeight: height * 0.2,
-                  justifyContent: "center",
-                  transform:[{scale:scaleLog}],
+                  maxHeight: height - width * (700 / 1080),
+                  minHeight: height - width * (700 / 1080),
+                  justifyContent: "space-around",
+                  paddingVertical: height * 0.08,
                 }}
               >
                 <Animated.View
                   style={{
-                    backgroundColor: "white",
-                    paddingVertical: 7,
-                    paddingHorizontal: 15,
-                    borderRadius: 50,
-                    alignItems: "center",
-                    alignSelf:"center",
-                    justifyContent: "center",
-                    zIndex: 10,
-                    top: 16,
-                    opacity: opacityBg,
-                    ...Platform.select({
-                      ios: {
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 1 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 3.84,
-                      },
-                      android: {
-                        elevation: 2,
-                      },
-                    }),
-                  }}
-                >
-                  <Text style={{ fontWeight: "500", fontSize: 15 }}>
-                    {item.name}
-                  </Text>
-                </Animated.View>
-                <Animated.View
-                  style={{
-                    width: width * 0.85,
-                    backgroundColor: "white",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    width: width * 0.9,
                     alignSelf: "center",
-                    borderRadius: 20,
-                    paddingTop: 15,
-                    paddingBottom: 15,
+                    alignItems:"center",
                     opacity: opacityBg,
-                    ...Platform.select({
-                      ios: {
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 3.84,
-                      },
-                      android: {
-                        elevation: 5,
-                      },
-                    }),
                   }}
                 >
-                  <View style={{ marginTop: 10 }}>
-                    {authOptions[item.id - 1]}
-                  </View>
-                </Animated.View>
-              </Animated.View>
-
-              <View>
-                <Animated.View
-                  style={{
-                    marginHorizontal: SPACING,
-                    padding: SPACING * 2,
-                    alignItems: "center",
-                    transform: [{ scale }, { translateY }],
-                    opacity,
-                  }}
-                >
-                  <ImageBackground
-                    source={item.icon}
+                  <FontAwesome6 name="quote-left" size={24} color="rgba(0,0,0,1)" />
+                  <Text
                     style={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: 100,
-                      alignItems: "center",
-                      justifyContent: "center",
+                      textAlign: "center",
+                      color: "rgba(0,0,0,0.7)",
+                      fontSize: 16,
+                      fontWeight: "600",
+                      paddingTop:height*0.01
                     }}
                   >
-                    <Animated.View style={{ opacity: opacityBg }}>
-                      <LottieView
-                        source={require("../assets/Lottie/iconHighlight.json")}
-                        autoPlay
-                        loop
-                        style={{
-                          width: 120,
-                          height: 120,
-                        }}
-                      />
-                    </Animated.View>
-                  </ImageBackground>
+                    {tips[item.id]}
+                  </Text>
+                  <AntDesign name="minus" size={35} color="black" />
+                </Animated.View>
+                <Animated.View
+                  style={{
+                    maxHeight: height * 0.2,
+                    minHeight: height * 0.2,
+                    justifyContent: "center",
+                    transform: [{ scale: scaleLog }],
+                  }}
+                >
+                  <Animated.View
+                    style={{
+                      backgroundColor: "white",
+                      paddingVertical: 7,
+                      paddingHorizontal: 15,
+                      borderRadius: 50,
+                      alignItems: "center",
+                      alignSelf: "center",
+                      justifyContent: "center",
+                      zIndex: 10,
+                      top: 16,
+                      opacity: opacityBg,
+                      ...Platform.select({
+                        ios: {
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 1 },
+                          shadowOpacity: 0.1,
+                          shadowRadius: 3.84,
+                        },
+                        android: {
+                          elevation: 2,
+                        },
+                      }),
+                    }}
+                  >
+                    <Text style={{ fontWeight: "500", fontSize: 15 }}>
+                      {item.name}
+                    </Text>
+                  </Animated.View>
+                  <Animated.View
+                    style={{
+                      width: width * 0.85,
+                      backgroundColor: "white",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      alignSelf: "center",
+                      borderRadius: 20,
+                      paddingTop: 15,
+                      paddingBottom: 15,
+                      opacity: opacityBg,
+                      ...Platform.select({
+                        ios: {
+                          shadowColor: "#000",
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.25,
+                          shadowRadius: 3.84,
+                        },
+                        android: {
+                          elevation: 5,
+                        },
+                      }),
+                    }}
+                  >
+                    <View style={{ marginTop: 10 }}>
+                      {authOptions[item.id - 1]}
+                    </View>
+                  </Animated.View>
                 </Animated.View>
               </View>
             </Animated.View>
           );
         }}
       />
+      <RenderLogin optionList={optionList} scrollX={scrollX} />
       <Image
         source={shape}
         resizeMode="contain"
@@ -586,8 +689,9 @@ const LoginScreen = () => {
           position: "absolute",
           width: width,
           maxHeight: width * (700 / 1080),
+          minHeight: width * (700 / 1080),
           bottom: 0,
-          zIndex: -1,
+          zIndex: -2,
         }}
       />
     </SafeAreaView>
