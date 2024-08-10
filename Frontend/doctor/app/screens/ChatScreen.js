@@ -1,5 +1,6 @@
 import {
   Image,
+  ImageBackground,
   useWindowDimensions,
   View,
   Text,
@@ -20,22 +21,18 @@ const ChatScreen = () => {
     {
       id: "1",
       text: "In this interactive chat we'll review your cycle length together. This could help you understand if something needs your attention and what information to show to your doctor. The next part is available only for Flo Premium subscribers.",
-      timestamp: "10:00 AM",
     },
     {
       id: "2",
       text: "You can try it now for free. Flo is offering you a free trial. It gives you access to all of our Premium content, including articles, courses, and chats.",
-      timestamp: "10:01 AM",
     },
     {
       id: "3",
       text: "What happens after the trial period?",
-      timestamp: "10:02 AM",
     },
     {
       id: "4",
       text: "You can cancel the subscription at any time. If you do, the app will return to standard mode when the trial ends.",
-      timestamp: "10:03 AM",
     },
   ]);
   const [inputText, setInputText] = useState("");
@@ -67,21 +64,22 @@ const ChatScreen = () => {
     scrollToEnd(); // Scroll to the end when the component first mounts or when messages change
   }, [messages]);
 
-  const shouldDisplayTimestamp = (currentIndex) => {
-    if (currentIndex === 0) return true; // Always show timestamp for the first message
-
-    const currentTimestamp = messages[currentIndex].timestamp;
-    const previousTimestamp = messages[currentIndex - 1].timestamp;
-
-    return currentTimestamp !== previousTimestamp;
-  };
-
   const renderMessage = ({ item, index }) => {
+    // Check if the message is a user message or default
     const isUserMessage = parseInt(item.id) > 4;
+
+    // Generate a timestamp for every message
+    const timestamp = item.timestamp
+      ? item.timestamp
+      : new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
     return (
       <View>
         {shouldDisplayTimestamp(index) && (
-          <Text style={styles.timestampText}>{item.timestamp}</Text>
+          <Text style={styles.timestampText}>{timestamp}</Text>
         )}
         <View
           style={[
@@ -108,6 +106,15 @@ const ChatScreen = () => {
         </View>
       </View>
     );
+  };
+
+  const shouldDisplayTimestamp = (currentIndex) => {
+    if (currentIndex === 0) return true; // Always show timestamp for the first message
+
+    const currentTimestamp = messages[currentIndex].timestamp;
+    const previousTimestamp = messages[currentIndex - 1].timestamp;
+
+    return currentTimestamp !== previousTimestamp;
   };
 
   return (
@@ -159,27 +166,32 @@ const ChatScreen = () => {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View style={styles.container}>
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            renderItem={renderMessage}
-            keyExtractor={(item) => item.id}
-            showsVerticalScrollIndicator={false}
-            onContentSizeChange={scrollToEnd} // Ensure it scrolls to the end when content size changes
-          />
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={inputText}
-              onChangeText={setInputText}
-              placeholder="Type your message"
+        <ImageBackground
+          source={require("../assets/chat-back.png")} // Replace with your background image
+          style={styles.backgroundImage}
+        >
+          <View style={styles.container}>
+            <FlatList
+              ref={flatListRef}
+              data={messages}
+              renderItem={renderMessage}
+              keyExtractor={(item) => item.id}
+              showsVerticalScrollIndicator={false}
+              onContentSizeChange={scrollToEnd} // Ensure it scrolls to the end when content size changes
             />
-            <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-              <Feather name="send" size={24} color="#8129a0" />
-            </TouchableOpacity>
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={styles.input}
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder="Type your message"
+              />
+              <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+                <Feather name="send" size={24} color="#48948a" />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        </ImageBackground>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -190,22 +202,25 @@ export default ChatScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f0f0f0",
-    padding: 10,
+    padding: "2.5%",
+  },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: "cover", // This will ensure the image covers the entire background
   },
   messageContainer: {
-    padding: 10,
+    padding: "2.5%",
     borderRadius: 20,
-    marginVertical: 5,
+    marginVertical: "1%",
     position: "relative",
   },
   defaultMessage: {
-    backgroundColor: "#dbedfb",
+    backgroundColor: "white",
     alignSelf: "flex-start",
     width: "85%",
   },
   userMessage: {
-    backgroundColor: "#89c6f9",
+    backgroundColor: "#74b9b0",
     alignSelf: "flex-end",
     maxWidth: "85%",
   },
@@ -223,22 +238,23 @@ const styles = StyleSheet.create({
     color: "black",
     alignSelf: "center",
     marginBottom: 2,
+    paddingTop: "5%",
   },
   inputContainer: {
     flexDirection: "row",
-    gap: 15,
-    paddingTop: 8,
-    paddingHorizontal: 7,
+    gap: "15%",
+    paddingTop: "2%",
+    paddingHorizontal: "1.8%",
   },
   input: {
     flex: 1,
     borderRadius: 30,
-    paddingHorizontal: 10,
+    paddingHorizontal: "2.5%",
     backgroundColor: "white",
   },
   sendButton: {
     backgroundColor: "white",
-    padding: 8,
+    padding: "2%",
     borderRadius: 50,
   },
   bubbleTail: {
@@ -247,7 +263,7 @@ const styles = StyleSheet.create({
     width: 0,
     height: 0,
     borderTopWidth: 20, // Tail height
-    borderLeftWidth: 1, // Tail width (left side)
+    borderLeftWidth: 18, // Tail width (left side)
     borderRightWidth: 0, // No right side border
     borderStyle: "solid",
     backgroundColor: "transparent",
@@ -255,13 +271,13 @@ const styles = StyleSheet.create({
   defaultBubbleTail: {
     left: 0, // Align tail with the left side of the default message
     borderTopColor: "transparent", // Top color transparent (triangle will point left)
-    borderLeftColor: "#dbedfb", // Tail color matches default message background
+    borderLeftColor: "white", // Tail color matches default message background
   },
   userBubbleTail: {
     right: 0, // Align tail with the right side of the user message
     borderTopColor: "transparent", // Top color transparent (triangle will point right)
     borderLeftColor: "transparent", // No left color
     borderRightWidth: 18, // Tail width (right side)
-    borderRightColor: "#89c6f9", // Tail color matches user message background
+    borderRightColor: "#74b9b0", // Tail color matches user message background
   },
 });
