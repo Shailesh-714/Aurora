@@ -120,7 +120,7 @@ const ChatScreen = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <>
       <View
         style={{
           flexDirection: "row",
@@ -195,7 +195,7 @@ const ChatScreen = () => {
           </View>
         </ImageBackground>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </>
   );
 };
 
