@@ -10,18 +10,24 @@ import {
   TouchableOpacity,
   TextInput,
   ImageBackground,
+  Alert,
 } from "react-native";
 import { useAnimatedRef } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 const { width, height } = Dimensions.get("window");
-import { MaterialCommunityIcons, FontAwesome6, AntDesign } from "@expo/vector-icons";
+import {
+  MaterialCommunityIcons,
+  FontAwesome6,
+  AntDesign,
+  Feather,
+} from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
-import bg1 from "../assets/images/backgrounds/loginbg/bg1.png";
-import bg2 from "../assets/images/backgrounds/loginbg/bg2.png";
-import bg3 from "../assets/images/backgrounds/loginbg/bg3.png";
-import bg4 from "../assets/images/backgrounds/loginbg/bg4.png";
-import bg5 from "../assets/images/backgrounds/loginbg/bg5.png";
 import shape from "../assets/images/backgrounds/loginbg/shape.png";
+import {
+  handleSignUp,
+  handleEmailLogin,
+  handleGoogleLogin,
+} from "../auth/Authentication";
 
 const SPACING = 10;
 const ITEM_SIZE = Platform.OS === "ios" ? width : width;
@@ -159,10 +165,19 @@ const RenderLogin = ({ optionList, scrollX }) => {
 };
 
 const LoginScreen = () => {
-  const [providerId, setProviderId] = React.useState(0);
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
-  const [register, setRegister] = React.useState(false);
+  const [showPwd, setShowPwd] = React.useState(true);
+
+  const handleAuth = async (action) => {
+    const result = await action(email, password);
+
+    if (result.success) {
+      Alert.alert(result.success);
+    } else if (result.error) {
+      Alert.alert(result.error);
+    }
+  };
 
   const optionList = [
     { id: 0 },
@@ -170,63 +185,62 @@ const LoginScreen = () => {
       id: 1,
       name: "Register",
       icon: require("../assets/images/icons/register.png"),
-      bg: require("../assets/images/backgrounds/loginbg/bg4.png"),
+      bg: require("../assets/images/backgrounds/loginbg/bg1.png"),
+      tips:"Stay Hydrated: Drinking enough water supports digestion, circulation, and temperature regulation."
     },
-    { id: 2, name: "Login", icon: require("../assets/images/icons/login.png") },
+    {
+      id: 2,
+      name: "Login",
+      icon: require("../assets/images/icons/login.png"),
+      bg: require("../assets/images/backgrounds/loginbg/bg2.png"),
+      tips:"Get Regular Checkups: Early detection of health issues can lead to more effective treatment."
+    },
     {
       id: 3,
       name: "Google",
       icon: require("../assets/images/icons/google.png"),
+      bg: require("../assets/images/backgrounds/loginbg/bg3.png"),
+      tips:"Eat the Rainbow: A variety of colorful fruits and vegetables provides essential vitamins and antioxidants."
     },
     {
       id: 4,
       name: "Facebook",
       icon: require("../assets/images/icons/facebook.png"),
+      bg: require("../assets/images/backgrounds/loginbg/bg4.png"),
+      tips:"Wash Your Hands: Proper hand hygiene can prevent the spread of infections and illness."
     },
     {
       id: 5,
       name: "Twitter X",
       icon: require("../assets/images/icons/twitter-x.png"),
+      bg: require("../assets/images/backgrounds/loginbg/bg5.png"),
+      tips:"Prioritize Sleep: Quality sleep is vital for immune function, mental clarity, and overall health."
     },
     { id: 6 },
   ];
 
-  const tips = [
-    "",
-    "Stay Hydrated: Drinking enough water supports digestion, circulation, and temperature regulation.",
-    "Get Regular Checkups: Early detection of health issues can lead to more effective treatment.",
-    "Eat the Rainbow: A variety of colorful fruits and vegetables provides essential vitamins and antioxidants.",
-    "Wash Your Hands: Proper hand hygiene can prevent the spread of infections and illness.",
-    "Prioritize Sleep: Quality sleep is vital for immune function, mental clarity, and overall health.",
-    "",
-  ];
-
   const authOptions = [
-    <View style={{ minWidth: "80%", paddingTop: "1.5%" }}>
+    <View style={{ minWidth: "85%", paddingTop: "4%", paddingBottom: "3%" }}>
       <View
         style={{
           flexDirection: "row",
           borderWidth: 2,
           borderRadius: 5,
           borderColor: "#f3f3f3",
-          padding: 3,
+          paddingVertical: 3,
+          paddingHorizontal: "4%",
           marginBottom: 5,
           alignItems: "center",
           gap: 10,
         }}
       >
-        <MaterialCommunityIcons
-          name="email-outline"
-          size={24}
-          color="black"
-          style={{ paddingLeft: 7, paddingRight: 5 }}
-        />
+        <MaterialCommunityIcons name="email-outline" size={24} color="black" />
         <TextInput
           value={email}
           onChangeText={(text) => setEmail(text)}
           placeholder="Enter your email"
           placeholderTextColor={"rgba(0,0,0,0.5)"}
-          style={{ width: 200, color: "black" }}
+          style={{ flex: 1, color: "black" }}
         />
       </View>
       <View
@@ -235,28 +249,40 @@ const LoginScreen = () => {
           borderWidth: 2,
           borderRadius: 5,
           borderColor: "#f3f3f3",
-          padding: 3,
+          paddingVertical: 3,
+          paddingHorizontal: "4%",
           marginBottom: 5,
           alignItems: "center",
           gap: 10,
+          maxWidth: "100%",
         }}
       >
-        <MaterialCommunityIcons
-          name="key-outline"
-          size={24}
-          color="black"
-          style={{ paddingLeft: 7, paddingRight: 5 }}
-        />
+        <MaterialCommunityIcons name="key-outline" size={24} color="black" />
         <TextInput
           value={password}
           onChangeText={(text) => setPassword(text)}
-          secureTextEntry={true}
+          secureTextEntry={showPwd}
           placeholder="password"
           placeholderTextColor={"rgba(0,0,0,0.5)"}
-          style={{ width: 200, color: "black" }}
+          style={{ flex: 1, color: "black" }}
         />
+        {showPwd ? (
+          <Feather
+            name="eye-off"
+            size={17}
+            color="black"
+            onPress={() => setShowPwd(false)}
+          />
+        ) : (
+          <Feather
+            name="eye"
+            size={17}
+            color="black"
+            onPress={() => setShowPwd(true)}
+          />
+        )}
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => handleAuth(handleSignUp)}>
         <View
           style={{
             backgroundColor: "#A6B0F2",
@@ -271,41 +297,34 @@ const LoginScreen = () => {
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setRegister(false)}
-        style={{ marginTop: 3 }}
-      >
+      <TouchableOpacity style={{ marginTop: 3 }}>
         <Text style={{ textAlign: "center", fontSize: 12, letterSpacing: 1.1 }}>
           Already a member?
           <Text style={{ color: "#008FFF" }}> Login!</Text>
         </Text>
       </TouchableOpacity>
     </View>,
-    <View style={{ minWidth: "80%", paddingTop: "1.5%" }}>
+    <View style={{ minWidth: "85%", paddingTop: "4%", paddingBottom: "3%" }}>
       <View
         style={{
           flexDirection: "row",
           borderWidth: 2,
           borderRadius: 5,
           borderColor: "#f3f3f3",
-          padding: 3,
+          paddingVertical: 3,
+          paddingHorizontal: "4%",
           marginBottom: 5,
           alignItems: "center",
           gap: 10,
         }}
       >
-        <MaterialCommunityIcons
-          name="email-outline"
-          size={24}
-          color="black"
-          style={{ paddingLeft: 7, paddingRight: 5 }}
-        />
+        <MaterialCommunityIcons name="email-outline" size={24} color="black" />
         <TextInput
           value={email}
           onChangeText={(text) => setEmail(text)}
           placeholder="Enter your email"
           placeholderTextColor={"rgba(0,0,0,0.5)"}
-          style={{ width: 200, color: "black" }}
+          style={{ flex: 1, color: "black" }}
         />
       </View>
       <View
@@ -314,28 +333,40 @@ const LoginScreen = () => {
           borderWidth: 2,
           borderRadius: 5,
           borderColor: "#f3f3f3",
-          padding: 3,
+          paddingVertical: 3,
+          paddingHorizontal: "4%",
           marginBottom: 5,
           alignItems: "center",
           gap: 10,
+          maxWidth: "100%",
         }}
       >
-        <MaterialCommunityIcons
-          name="key-outline"
-          size={24}
-          color="black"
-          style={{ paddingLeft: 7, paddingRight: 5 }}
-        />
+        <MaterialCommunityIcons name="key-outline" size={24} color="black" />
         <TextInput
           value={password}
           onChangeText={(text) => setPassword(text)}
-          secureTextEntry={true}
+          secureTextEntry={showPwd}
           placeholder="password"
           placeholderTextColor={"rgba(0,0,0,0.5)"}
-          style={{ width: 200, color: "black" }}
+          style={{ flex: 1, color: "black" }}
         />
+        {showPwd ? (
+          <Feather
+            name="eye-off"
+            size={17}
+            color="black"
+            onPress={() => setShowPwd(false)}
+          />
+        ) : (
+          <Feather
+            name="eye"
+            size={17}
+            color="black"
+            onPress={() => setShowPwd(true)}
+          />
+        )}
       </View>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => handleAuth(handleEmailLogin)}>
         <View
           style={{
             backgroundColor: "#A6B0F2",
@@ -350,10 +381,7 @@ const LoginScreen = () => {
           </Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => setRegister(true)}
-        style={{ marginTop: 3 }}
-      >
+      <TouchableOpacity style={{ marginTop: 3 }}>
         <Text style={{ textAlign: "center", fontSize: 12, letterSpacing: 1.1 }}>
           New User?
           <Text style={{ color: "#008FFF" }}> Create an Account</Text>
@@ -362,11 +390,12 @@ const LoginScreen = () => {
     </View>,
     <View style={{ maxWidth: "90%", minWidth: "90%" }}>
       <TouchableOpacity
+        onPress={() => handleAuth(handleGoogleLogin)}
         style={{
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-evenly",
-          borderRadius: 5,
+          borderRadius: 100,
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
@@ -402,7 +431,7 @@ const LoginScreen = () => {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-evenly",
-          borderRadius: 5,
+          borderRadius: 100,
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
@@ -440,7 +469,7 @@ const LoginScreen = () => {
           justifyContent: "space-evenly",
           borderWidth: 1,
           borderColor: "#f2f2f2",
-          borderRadius: 5,
+          borderRadius: 100,
           paddingVertical: 5,
           paddingHorizontal: 15,
           gap: 10,
@@ -471,11 +500,10 @@ const LoginScreen = () => {
       </View>
     </View>,
   ];
-
   const scrollX = React.useRef(new Animated.Value(0)).current;
 
   const renderBackgrounds = () => {
-    return backgroundImages.map((bg, index) => {
+    return optionList.filter((item)=>item.bg).map((item, index) => {
       const inputRange = [
         (index - 1) * ITEM_SIZE,
         index * ITEM_SIZE,
@@ -491,7 +519,7 @@ const LoginScreen = () => {
       return (
         <Animated.Image
           key={`bg-${index}`}
-          source={bg}
+          source={item.bg}
           style={{
             position: "absolute",
             width: width,
@@ -505,7 +533,6 @@ const LoginScreen = () => {
     });
   };
 
-  const backgroundImages = [bg1, bg2, bg3, bg4, bg5];
   return (
     <SafeAreaView style={{ flex: 1, alignItems: "center", minHeight: height }}>
       {renderBackgrounds()}
@@ -544,24 +571,6 @@ const LoginScreen = () => {
             index * ITEM_SIZE,
           ];
 
-          const translateY = scrollX.interpolate({
-            inputRange,
-            outputRange: [80, 0, 80],
-            extrapolate: "clamp",
-          });
-
-          const scale = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.5, 1, 0.5],
-            extrapolate: "clamp",
-          });
-
-          const opacity = scrollX.interpolate({
-            inputRange,
-            outputRange: [0.7, 1, 0.7],
-            extrapolate: "clamp",
-          });
-
           const opacityBg = scrollX.interpolate({
             inputRange,
             outputRange: [0, 1, 0],
@@ -577,7 +586,7 @@ const LoginScreen = () => {
             <Animated.View
               style={{
                 width: ITEM_SIZE,
-                minHeight: height
+                minHeight: height,
               }}
             >
               <View
@@ -585,28 +594,33 @@ const LoginScreen = () => {
                   maxHeight: height - width * (700 / 1080),
                   minHeight: height - width * (700 / 1080),
                   justifyContent: "space-around",
-                  paddingVertical: height * 0.08,
+                  paddingTop: height * 0.02,
+                  paddingBottom: height * 0.08,
                 }}
               >
                 <Animated.View
                   style={{
                     width: width * 0.9,
                     alignSelf: "center",
-                    alignItems:"center",
+                    alignItems: "center",
                     opacity: opacityBg,
                   }}
                 >
-                  <FontAwesome6 name="quote-left" size={24} color="rgba(0,0,0,1)" />
+                  <FontAwesome6
+                    name="quote-left"
+                    size={24}
+                    color="rgba(0,0,0,1)"
+                  />
                   <Text
                     style={{
                       textAlign: "center",
                       color: "rgba(0,0,0,0.7)",
                       fontSize: 16,
                       fontWeight: "600",
-                      paddingTop:height*0.01
+                      paddingTop: height * 0.01,
                     }}
                   >
-                    {tips[item.id]}
+                    {item.tips}
                   </Text>
                   <AntDesign name="minus" size={35} color="black" />
                 </Animated.View>
