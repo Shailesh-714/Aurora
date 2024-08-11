@@ -10,7 +10,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  Dimensions 
+  Dimensions,
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useState, useRef, useEffect } from "react";
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    gap: width*0.02,
+    gap: width * 0.02,
     paddingTop: "2%",
     paddingHorizontal: "1.8%",
   },
