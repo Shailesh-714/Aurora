@@ -10,10 +10,12 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Dimensions 
 } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useState, useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+const { width, height } = Dimensions.get("window");
 
 const ChatScreen = () => {
   const screenWidth = useWindowDimensions().width;
@@ -242,7 +244,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    gap: "15%",
+    gap: width*0.02,
     paddingTop: "2%",
     paddingHorizontal: "1.8%",
   },
