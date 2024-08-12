@@ -2,7 +2,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { auth } from '../../firebaseConfig';
 
-export const handleSignUp = async (email, password) => {
+export const signUp = async (email, password) => {
   try {
     const userCredentials = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredentials.user;
@@ -20,7 +20,7 @@ export const handleSignUp = async (email, password) => {
   }
 };
 
-export const handleEmailLogin = async (email, password) => {
+export const login = async (email, password) => {
   try {
     const userCredentials = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredentials.user;
@@ -30,7 +30,7 @@ export const handleEmailLogin = async (email, password) => {
   }
 };
 
-export const handleGoogleLogin = async () => {
+export const google = async () => {
     const provider = new GoogleAuthProvider();
     signInWithPopup(auth, provider)
     .then((result) => {
