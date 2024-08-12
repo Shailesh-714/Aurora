@@ -15,29 +15,20 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { ill } from "../data/IllData";
+import { doc } from "../data/DocData";
+import { useNavigation } from "@react-navigation/native";
 
 const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
+
+  const navigation = useNavigation();
 
   const handleSearch = () => {
     if (searchQuery !== "") {
       navigation.navigate("SearchResult", { searchQuery });
     }
   };
-  const ill = [
-    {
-      source: require("../assets/images/ill_tips/cold.jpg"),
-      link: "https://my.clevelandclinic.org/health/diseases/12342-common-cold",
-    },
-    {
-      source: require("../assets/emologo.png"),
-      link: "https://github.com/Shailesh-714",
-    },
-    {
-      source: require("../assets/emologo.png"),
-      link: "https://github.com/Shailesh-714",
-    },
-  ];
 
   const handlePress = (link) => {
     Linking.openURL(link).catch((err) =>
@@ -69,27 +60,33 @@ const HomeScreen = () => {
         <View style={{ flex: 1, margin: 10, flexDirection: "column" }}>
           <Text style={{ fontSize: 20, fontWeight: 600 }}>Everyday health</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {ill.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handlePress(item.link)}
-              >
-                <Image source={item.source} style={styles.image} />
-              </TouchableOpacity>
-            ))}
+            <FlatList
+              data={ill}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => handlePress(item.link)}>
+                  <Image source={item.source} style={styles.image} />
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              horizontal={true}
+              pagingEnabled={true}
+            />
           </ScrollView>
         </View>
         <View style={{ flex: 1, margin: 10, flexDirection: "column" }}>
           <Text style={{ fontSize: 20, fontWeight: 600 }}>Body & Soul</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {ill.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handlePress(item.link)}
-              >
-                <Image source={item.source} style={styles.image} />
-              </TouchableOpacity>
-            ))}
+            <FlatList
+              data={ill}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => handlePress(item.link)}>
+                  <Image source={item.source} style={styles.image} />
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              horizontal={true}
+              pagingEnabled={true}
+            />
           </ScrollView>
         </View>
         <View style={{ flex: 1, margin: 10, flexDirection: "column" }}>
@@ -97,18 +94,65 @@ const HomeScreen = () => {
             Critical Care Corner
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {ill.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handlePress(item.link)}
-              >
-                <Image source={item.source} style={styles.image} />
-              </TouchableOpacity>
-            ))}
+            <FlatList
+              data={ill}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => handlePress(item.link)}>
+                  <Image source={item.source} style={styles.image} />
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item, index) => index.toString()}
+              horizontal={true}
+              pagingEnabled={true}
+            />
           </ScrollView>
         </View>
-        <View style={{ flex: 1, margin: 10, flexDirection: "column" }}>
+        <View style={{ flex: 1, margin: 10, flexDirection: "column", gap: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: 600 }}>Talk to Us</Text>
+          {doc.map((item, index) => (
+            <Pressable
+              key={index}
+              onPress={() => navigation.navigate("ChatScreen", { doc: item })}
+            >
+              <View
+                style={{
+                  width: "100%",
+
+                  backgroundColor: "white",
+                  borderRadius: 7,
+                  padding: 10,
+                }}
+              >
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                  <Image
+                    source={item.image}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      borderRadius: 60,
+                    }}
+                  />
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "column",
+                      paddingLeft: 10,
+                    }}
+                  >
+                    <Text numberOfLines={3} style={{ fontWeight: 600 }}>
+                      {item.title}
+                    </Text>
+                    <Text
+                      numberOfLines={9}
+                      style={{ fontSize: 12, paddingTop: 5 }}
+                    >
+                      {item.description}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </Pressable>
+          ))}
         </View>
       </ScrollView>
     </View>
@@ -123,9 +167,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: "90%",
     borderRadius: 50,
-
     backgroundColor: "#ededed",
-
     marginBottom: 15,
   },
   container: {
@@ -136,8 +178,8 @@ const styles = StyleSheet.create({
     paddingBottom: 170,
   },
   image: {
-    width: 130,
-    height: 130,
+    width: 150,
+    height: 170,
     marginTop: 15,
     marginRight: 20,
     resizeMode: "cover",

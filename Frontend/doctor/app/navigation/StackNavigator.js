@@ -3,21 +3,31 @@ import React from "react";
 import AnimTab1 from "./BottomTabs"; // Adjust the path as necessary
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
-const {width} = Dimensions.get("window");
+import ChatScreen from "../screens/ChatScreen";
+const { width } = Dimensions.get("window");
 
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
-  return (<View style={{...Platform.select({android:{paddingTop:width*0.025}})}}>
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Main"
-          component={AnimTab1}
-          options={{ headerShown: false }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer></View>
+  return (
+    <View
+      style={{ ...Platform.select({ android: { paddingTop: width * 0.025 } }) }}
+    >
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Main"
+            component={AnimTab1}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ChatScreen"
+            component={ChatScreen}
+            options={{ headerShown: false }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </View>
   );
 };
 
