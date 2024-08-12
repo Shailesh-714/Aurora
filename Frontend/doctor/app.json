@@ -7,8 +7,8 @@
     "icon": "./app/assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./app/assets/logoTransparent.png",
-      "resizeMode": "contain",
+      "image": "./app/assets/splash.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "ios": {
@@ -16,7 +16,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./app/assets/logoTransparent.png",
+        "foregroundImage": "./app/assets/splash.png",
         "backgroundColor": "#ffffff"
       }
     },
