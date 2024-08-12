@@ -14,6 +14,7 @@ import * as Animatable from "react-native-animatable";
 import { useTheme } from "@react-navigation/native";
 import ChatScreen from "../screens/ChatScreen";
 import LoginScreen from "../screens/LoginScreen";
+import HomeScreen from "../screens/HomeScreen";
 
 const TabArr = [
   {
@@ -24,36 +25,22 @@ const TabArr = [
     component: ChatScreen,
     color: "#5BB2D0",
   },
-  {
-    route: "Health",
-    label: "Health",
-    type: Icons.MaterialCommunityIcons,
-    icon: "food-apple-outline",
-    component: LoginScreen,
-    color: "#F27559",
-  },
+
   {
     route: "Community",
     label: "Community",
     type: Icons.Ionicons,
     icon: "people-outline",
-    component: ColorScreen,
+    component: HomeScreen,
     color: "#8773BB",
   },
-  {
-    route: "Activity",
-    label: "Activity",
-    type: Icons.Feather,
-    icon: "activity",
-    component: ColorScreen,
-    color: "#F14C6E",
-  },
+
   {
     route: "Account",
     label: "Account",
     type: Icons.FontAwesome,
     icon: "user-circle-o",
-    component: ColorScreen,
+    component: LoginScreen,
     color: "#F6AD3E",
   },
 ];
