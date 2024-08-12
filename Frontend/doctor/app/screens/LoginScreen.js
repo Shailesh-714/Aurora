@@ -23,11 +23,7 @@ import {
 } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import shape from "../assets/images/backgrounds/loginbg/shape.png";
-import {
-  handleSignUp,
-  handleEmailLogin,
-  handleGoogleLogin,
-} from "../auth/Authentication";
+import { signUp, login, google } from "../auth/Authentication";
 
 const SPACING = 10;
 const ITEM_SIZE = Platform.OS === "ios" ? width : width;
@@ -165,9 +161,12 @@ const RenderLogin = ({ optionList, scrollX }) => {
 };
 
 const LoginScreen = () => {
+  const scrollX = React.useRef(new Animated.Value(0)).current;
   const [password, setPassword] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [showPwd, setShowPwd] = React.useState(true);
+  const [err, setErr] = React.useState();
+  const [errMsg, setErrMsg] = React.useState();
 
   const handleAuth = async (action) => {
     const result = await action(email, password);
@@ -175,7 +174,17 @@ const LoginScreen = () => {
     if (result.success) {
       Alert.alert(result.success);
     } else if (result.error) {
-      Alert.alert(result.error);
+      setErrMsg(result.error)
+      switch(action){
+        case signUp:
+          setErr("signup")
+          break
+        case login:
+          setErr("login")
+          break
+        default:
+          Alert.alert(result.error);
+      }
     }
   };
 
@@ -186,35 +195,35 @@ const LoginScreen = () => {
       name: "Register",
       icon: require("../assets/images/icons/register.png"),
       bg: require("../assets/images/backgrounds/loginbg/bg1.png"),
-      tips:"Stay Hydrated: Drinking enough water supports digestion, circulation, and temperature regulation."
+      tips: "Stay Hydrated: Drinking enough water supports digestion, circulation, and temperature regulation.",
     },
     {
       id: 2,
       name: "Login",
       icon: require("../assets/images/icons/login.png"),
       bg: require("../assets/images/backgrounds/loginbg/bg2.png"),
-      tips:"Get Regular Checkups: Early detection of health issues can lead to more effective treatment."
+      tips: "Get Regular Checkups: Early detection of health issues can lead to more effective treatment.",
     },
     {
       id: 3,
       name: "Google",
       icon: require("../assets/images/icons/google.png"),
       bg: require("../assets/images/backgrounds/loginbg/bg3.png"),
-      tips:"Eat the Rainbow: A variety of colorful fruits and vegetables provides essential vitamins and antioxidants."
+      tips: "Eat the Rainbow: A variety of colorful fruits and vegetables provides essential vitamins and antioxidants.",
     },
     {
       id: 4,
       name: "Facebook",
       icon: require("../assets/images/icons/facebook.png"),
       bg: require("../assets/images/backgrounds/loginbg/bg4.png"),
-      tips:"Wash Your Hands: Proper hand hygiene can prevent the spread of infections and illness."
+      tips: "Wash Your Hands: Proper hand hygiene can prevent the spread of infections and illness.",
     },
     {
       id: 5,
       name: "Twitter X",
       icon: require("../assets/images/icons/twitter-x.png"),
       bg: require("../assets/images/backgrounds/loginbg/bg5.png"),
-      tips:"Prioritize Sleep: Quality sleep is vital for immune function, mental clarity, and overall health."
+      tips: "Prioritize Sleep: Quality sleep is vital for immune function, mental clarity, and overall health.",
     },
     { id: 6 },
   ];
@@ -282,7 +291,7 @@ const LoginScreen = () => {
           />
         )}
       </View>
-      <TouchableOpacity onPress={() => handleAuth(handleSignUp)}>
+      <TouchableOpacity onPress={() => handleAuth(signUp)}>
         <View
           style={{
             backgroundColor: "#A6B0F2",
@@ -366,7 +375,7 @@ const LoginScreen = () => {
           />
         )}
       </View>
-      <TouchableOpacity onPress={() => handleAuth(handleEmailLogin)}>
+      <TouchableOpacity onPress={() => handleAuth(login)}>
         <View
           style={{
             backgroundColor: "#A6B0F2",
@@ -500,37 +509,38 @@ const LoginScreen = () => {
       </View>
     </View>,
   ];
-  const scrollX = React.useRef(new Animated.Value(0)).current;
 
   const renderBackgrounds = () => {
-    return optionList.filter((item)=>item.bg).map((item, index) => {
-      const inputRange = [
-        (index - 1) * ITEM_SIZE,
-        index * ITEM_SIZE,
-        (index + 1) * ITEM_SIZE,
-      ];
+    return optionList
+      .filter((item) => item.bg)
+      .map((item, index) => {
+        const inputRange = [
+          (index - 1) * ITEM_SIZE,
+          index * ITEM_SIZE,
+          (index + 1) * ITEM_SIZE,
+        ];
 
-      const translateX = scrollX.interpolate({
-        inputRange,
-        outputRange: [-width, 0, width],
-        extrapolate: "clamp",
+        const translateX = scrollX.interpolate({
+          inputRange,
+          outputRange: [-width, 0, width],
+          extrapolate: "clamp",
+        });
+
+        return (
+          <Animated.Image
+            key={`bg-${index}`}
+            source={item.bg}
+            style={{
+              position: "absolute",
+              width: width,
+              height: height,
+              transform: [{ translateX }],
+              zIndex: -3,
+            }}
+            resizeMode="cover"
+          />
+        );
       });
-
-      return (
-        <Animated.Image
-          key={`bg-${index}`}
-          source={item.bg}
-          style={{
-            position: "absolute",
-            width: width,
-            height: height,
-            transform: [{ translateX }],
-            zIndex: -3,
-          }}
-          resizeMode="cover"
-        />
-      );
-    });
   };
 
   return (
