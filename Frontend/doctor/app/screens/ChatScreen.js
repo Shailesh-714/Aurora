@@ -12,49 +12,61 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
+import axios from "axios";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useState, useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const { width, height } = Dimensions.get("window");
 
 const ChatScreen = () => {
   const screenWidth = useWindowDimensions().width;
-  const [messages, setMessages] = useState([
-    {
-      id: "1",
-      text: "In this interactive chat we'll review your cycle length together. This could help you understand if something needs your attention and what information to show to your doctor. The next part is available only for Flo Premium subscribers.",
-    },
-    {
-      id: "2",
-      text: "You can try it now for free. Flo is offering you a free trial. It gives you access to all of our Premium content, including articles, courses, and chats.",
-    },
-    {
-      id: "3",
-      text: "What happens after the trial period?",
-    },
-    {
-      id: "4",
-      text: "You can cancel the subscription at any time. If you do, the app will return to standard mode when the trial ends.",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const flatListRef = useRef(null);
 
-  const sendMessage = () => {
-    if (inputText.trim().length > 0) {
-      const timestamp = new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+  const sendMessage = async () => {
+    try {
+      const prompt = inputText;
+      if (inputText.trim().length > 0) {
+        const timestamp = new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { id: Date.now().toString(), text: inputText, timestamp: timestamp },
-      ]);
-      setInputText("");
-      scrollToEnd();
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { id: Date.now().toString(),role:"user", text: inputText, timestamp: timestamp },
+        ]);
+        setInputText("");
+        scrollToEnd();
+
+        const prevHist = await AsyncStorage.getItem("history");
+        const chatHist = prevHist ? JSON.parse(prevHist) : [];
+        chatHist.push({"role":"user","content":prompt});
+        const response = await axios.post(
+          "https://artistic-sunbird-actively.ngrok-free.app/api/chat",
+          {
+            model: "psychatrist",
+            messages: [{"role":"user", "content":prompt}],
+            stream: false,
+          }
+        );
+        const botMessage = response?.data?.message?.content
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { id: Date.now().toString(), role: "assistant",text: botMessage, timestamp: timestamp },
+        ]);
+        chatHist.push({"role":"assistant","content":botMessage})
+        await AsyncStorage.setItem("history", JSON.stringify(chatHist));
+        console.log(chatHist)
+        scrollToEnd();
+      }
+    } catch (err) {
+      console.log(err);
     }
   };
+
 
   const scrollToEnd = () => {
     if (flatListRef.current) {
@@ -68,7 +80,7 @@ const ChatScreen = () => {
 
   const renderMessage = ({ item, index }) => {
     // Check if the message is a user message or default
-    const isUserMessage = parseInt(item.id) > 4;
+    const isUserMessage = item.role==="user";
 
     // Generate a timestamp for every message
     const timestamp = item.timestamp

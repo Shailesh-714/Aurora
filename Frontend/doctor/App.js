@@ -48,7 +48,7 @@ export default function App() {
   return (
     <SafeAreaProvider style={styles.container}>
       <SafeAreaView onLayout={onLayoutRootView} style={{ minWidth: "100%" }}>
-        {user ? <StackNavigator /> : <LoginScreen />}
+        {/* {user ? <StackNavigator /> : <LoginScreen />} */}<ChatScreen/>
       </SafeAreaView>
     </SafeAreaProvider>
   );
