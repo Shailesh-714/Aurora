@@ -1,12 +1,9 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet } from "react-native";
-import ChatScreen from "./app/screens/ChatScreen";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import StackNavigator from "./app/navigation/StackNavigator";
-import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "./app/screens/LoginScreen";
-import { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
+import { useCallback, useEffect, useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
@@ -46,8 +43,13 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider style={styles.container}>
-      <SafeAreaView onLayout={onLayoutRootView} style={{ minWidth: "100%" }}>
+    <SafeAreaProvider>
+      <SafeAreaView
+        onLayout={onLayoutRootView}
+        style={{
+          flex: 1,
+        }}
+      >
         {user ? <StackNavigator /> : <LoginScreen />}
       </SafeAreaView>
     </SafeAreaProvider>
@@ -57,7 +59,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#020121",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -10,9 +10,7 @@ const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
   return (
-    <View
-      style={{ ...Platform.select({ android: { paddingTop: width * 0.025 } }) }}
-    >
+
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
@@ -27,7 +25,7 @@ const StackNavigator = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </View>
+
   );
 };
 
