@@ -13,7 +13,7 @@ import { auth } from "./firebaseConfig";
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [user, setUser] = useState();
- 
+
   useEffect(() => {
     async function prepare() {
       try {

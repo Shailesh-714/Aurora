@@ -9,6 +9,7 @@ import {
   Image,
   FlatList,
   useWindowDimensions,
+  ImageBackground,
   Linking,
   Touchable,
   TouchableOpacity,
@@ -57,14 +58,16 @@ const HomeScreen = () => {
         </Pressable>
       </View>
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={{ flex: 1, margin: 10, flexDirection: "column" }}>
+        <View style={{ flex: 1, marginVertical: 10, flexDirection: "column" }}>
           <Text style={{ fontSize: 20, fontWeight: 600 }}>Everyday health</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <FlatList
               data={ill}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <Image source={item.source} style={styles.image} />
+                  <ImageBackground source={item.source} style={styles.image}>
+                    <Text style={styles.imageText}>{item.label}</Text>
+                  </ImageBackground>
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -73,14 +76,16 @@ const HomeScreen = () => {
             />
           </ScrollView>
         </View>
-        <View style={{ flex: 1, margin: 10, flexDirection: "column" }}>
+        <View style={{ flex: 1, marginVertical: 10, flexDirection: "column" }}>
           <Text style={{ fontSize: 20, fontWeight: 600 }}>Body & Soul</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <FlatList
               data={ill}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <Image source={item.source} style={styles.image} />
+                  <ImageBackground source={item.source} style={styles.image}>
+                    <Text style={styles.imageText}>{item.label}</Text>
+                  </ImageBackground>
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -89,7 +94,7 @@ const HomeScreen = () => {
             />
           </ScrollView>
         </View>
-        <View style={{ flex: 1, margin: 10, flexDirection: "column" }}>
+        <View style={{ flex: 1, marginVertical: 10, flexDirection: "column" }}>
           <Text style={{ fontSize: 20, fontWeight: 600 }}>
             Critical Care Corner
           </Text>
@@ -98,7 +103,9 @@ const HomeScreen = () => {
               data={ill}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <Image source={item.source} style={styles.image} />
+                  <ImageBackground source={item.source} style={styles.image}>
+                    <Text style={styles.imageText}>{item.label}</Text>
+                  </ImageBackground>
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -174,15 +181,25 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     flexWrap: "wrap",
     justifyContent: "space-around",
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     paddingBottom: 170,
   },
   image: {
-    width: 150,
-    height: 170,
+    width: 160,
+    height: 200,
     marginTop: 15,
-    marginRight: 20,
+    marginLeft: 10,
     resizeMode: "cover",
     borderRadius: 10,
+  },
+  imageText: {
+    position: "absolute",
+    bottom: 1,
+    color: "black",
+    fontSize: 14,
+    fontWeight: "bold",
+    padding: 3,
+    paddingHorizontal: 7,
   },
 });
