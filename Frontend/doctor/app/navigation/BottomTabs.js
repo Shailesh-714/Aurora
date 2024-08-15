@@ -25,6 +25,14 @@ const TabArr = [
     component: ChatScreen,
     color: "#5BB2D0",
   },
+  {
+    route: "Health",
+    label: "Health",
+    type: Icons.MaterialCommunityIcons,
+    icon: "food-apple-outline",
+    component: ColorScreen,
+    color: "#F27559",
+  },
 
   {
     route: "Community",
@@ -33,6 +41,14 @@ const TabArr = [
     icon: "people-outline",
     component: HomeScreen,
     color: "#8773BB",
+  },
+  {
+    route: "Activity",
+    label: "Activity",
+    type: Icons.Feather,
+    icon: "activity",
+    component: ColorScreen,
+    color: "#F14C6E",
   },
 
   {
