@@ -17,8 +17,10 @@ import {
 import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { ill } from "../data/IllData";
+import { tips } from "../data/TipsData";
 import { doc } from "../data/DocData";
 import { useNavigation } from "@react-navigation/native";
+import { sick } from "../data/SickData";
 
 const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -65,9 +67,11 @@ const HomeScreen = () => {
               data={ill}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <ImageBackground source={item.source} style={styles.image}>
-                    <Text style={styles.imageText}>{item.label}</Text>
-                  </ImageBackground>
+                  <View>
+                    <ImageBackground source={item.source} style={styles.image}>
+                      <Text style={styles.imageText}>{item.label}</Text>
+                    </ImageBackground>
+                  </View>
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -80,12 +84,14 @@ const HomeScreen = () => {
           <Text style={{ fontSize: 20, fontWeight: 600 }}>Body & Soul</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <FlatList
-              data={ill}
+              data={tips}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <ImageBackground source={item.source} style={styles.image}>
-                    <Text style={styles.imageText}>{item.label}</Text>
-                  </ImageBackground>
+                  <View>
+                    <ImageBackground source={item.source} style={styles.image}>
+                      <Text style={styles.imageText}>{item.label}</Text>
+                    </ImageBackground>
+                  </View>
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -100,12 +106,14 @@ const HomeScreen = () => {
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <FlatList
-              data={ill}
+              data={sick}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <ImageBackground source={item.source} style={styles.image}>
-                    <Text style={styles.imageText}>{item.label}</Text>
-                  </ImageBackground>
+                  <View style={{ borderRadius: 10 }}>
+                    <ImageBackground source={item.source} style={styles.image}>
+                      <Text style={styles.imageText}>{item.label}</Text>
+                    </ImageBackground>
+                  </View>
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
@@ -191,7 +199,6 @@ const styles = StyleSheet.create({
     marginTop: 15,
     marginLeft: 10,
     resizeMode: "cover",
-    borderRadius: 10,
   },
   imageText: {
     position: "absolute",

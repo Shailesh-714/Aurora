@@ -1,29 +1,24 @@
-const ill = [
+const tips = [
   {
-    source: require("../assets/images/ill_tips/fever.png"),
+    source: require("../assets/images/ill_tips/skin.png"),
     link: "https://my.clevelandclinic.org/health/diseases/12342-common-cold",
-    label: "Fever Fighters: Stay Cool, Calm", // Adding a label
+    label: "Glow On: Skin's Best Friend",
   },
   {
-    source: require("../assets/images/ill_tips/cold.png"),
+    source: require("../assets/images/ill_tips/exercise.png"),
     link: "https://github.com/Shailesh-714",
-    label: "Cold Cure: Breathe Easy Again", // Adding a label
+    label: "Fit Moves: Energize Your Life",
   },
   {
-    source: require("../assets/images/ill_tips/foodpoison.png"),
+    source: require("../assets/images/ill_tips/diet.png"),
     link: "https://github.com/Shailesh-714",
-    label: "Food Foes: Tame the Tummy", // Adding a label
+    label: "Eat Smart: Fuel Your Body",
   },
   {
-    source: require("../assets/images/ill_tips/stomachache.png"),
+    source: require("../assets/images/ill_tips/mental.png"),
     link: "https://github.com/Shailesh-714",
-    label: "Gut Signals: Listen and Heal", // Adding a label
-  },
-  {
-    source: require("../assets/images/ill_tips/headache.png"),
-    link: "https://github.com/Shailesh-714",
-    label: "Headspace: Find Your Peace", // Adding a label
+    label: "Mind Wellness: Balance and Thrive",
   },
 ];
 
-export { ill };
+export { tips };
