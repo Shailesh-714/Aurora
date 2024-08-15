@@ -1,7 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useEffect, useRef } from "react";
 import {
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -15,6 +14,7 @@ import { useTheme } from "@react-navigation/native";
 import ChatScreen from "../screens/ChatScreen";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const TabArr = [
   {
