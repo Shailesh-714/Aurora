@@ -126,7 +126,7 @@ const TabButton = (props) => {
             ref={circleRef}
             style={[
               styles.circle,
-              { backgroundColor: focused ? item.color : item.color }, // Maintain the same color throughout the animation
+              { backgroundColor: focused ? item.color : item.color }, 
             ]}
           />
           <Animatable.View ref={iconRef}>
