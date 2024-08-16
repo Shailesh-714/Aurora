@@ -80,48 +80,7 @@ const HomeScreen = () => {
             />
           </ScrollView>
         </View>
-        <View style={{ flex: 1, marginVertical: 10, flexDirection: "column" }}>
-          <Text style={{ fontSize: 20, fontWeight: 600 }}>Body & Soul</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <FlatList
-              data={tips}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <View>
-                    <ImageBackground source={item.source} style={styles.image}>
-                      <Text style={styles.imageText}>{item.label}</Text>
-                    </ImageBackground>
-                  </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-              horizontal={true}
-              pagingEnabled={true}
-            />
-          </ScrollView>
-        </View>
-        <View style={{ flex: 1, marginVertical: 10, flexDirection: "column" }}>
-          <Text style={{ fontSize: 20, fontWeight: 600 }}>
-            Critical Care Corner
-          </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <FlatList
-              data={sick}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handlePress(item.link)}>
-                  <View style={{ borderRadius: 10 }}>
-                    <ImageBackground source={item.source} style={styles.image}>
-                      <Text style={styles.imageText}>{item.label}</Text>
-                    </ImageBackground>
-                  </View>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item, index) => index.toString()}
-              horizontal={true}
-              pagingEnabled={true}
-            />
-          </ScrollView>
-        </View>
+
         <View style={{ flex: 1, margin: 10, flexDirection: "column", gap: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: 600 }}>Talk to Us</Text>
           {doc.map((item, index) => (
