@@ -44,14 +44,14 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView
+      <View
         onLayout={onLayoutRootView}
         style={{
           flex: 1,
         }}
       >
         {user ? <StackNavigator /> : <LoginScreen />}
-      </SafeAreaView>
+      </View>
     </SafeAreaProvider>
   );
 }
