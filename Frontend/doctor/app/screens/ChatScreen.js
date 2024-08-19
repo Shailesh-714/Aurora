@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  StatusBar,
 } from "react-native";
 import axios from "axios";
 import { Ionicons, Feather } from "@expo/vector-icons";
@@ -36,37 +37,46 @@ const ChatScreen = () => {
 
         setMessages((prevMessages) => [
           ...prevMessages,
-          { id: Date.now().toString(),role:"user", text: inputText, timestamp: timestamp },
+          {
+            id: Date.now().toString(),
+            role: "user",
+            text: inputText,
+            timestamp: timestamp,
+          },
         ]);
         setInputText("");
         scrollToEnd();
 
         const prevHist = await AsyncStorage.getItem("history");
         const chatHist = prevHist ? JSON.parse(prevHist) : [];
-        chatHist.push({"role":"user","content":prompt});
+        chatHist.push({ role: "user", content: prompt });
         const response = await axios.post(
           "https://artistic-sunbird-actively.ngrok-free.app/api/chat",
           {
             model: "psychatrist",
-            messages: [{"role":"user", "content":prompt}],
+            messages: [{ role: "user", content: prompt }],
             stream: false,
           }
         );
-        const botMessage = response?.data?.message?.content
+        const botMessage = response?.data?.message?.content;
         setMessages((prevMessages) => [
           ...prevMessages,
-          { id: Date.now().toString(), role: "assistant",text: botMessage, timestamp: timestamp },
+          {
+            id: Date.now().toString(),
+            role: "assistant",
+            text: botMessage,
+            timestamp: timestamp,
+          },
         ]);
-        chatHist.push({"role":"assistant","content":botMessage})
+        chatHist.push({ role: "assistant", content: botMessage });
         await AsyncStorage.setItem("history", JSON.stringify(chatHist));
-        console.log(chatHist)
+        console.log(chatHist);
         scrollToEnd();
       }
     } catch (err) {
       console.log(err);
     }
   };
-
 
   const scrollToEnd = () => {
     if (flatListRef.current) {
@@ -80,7 +90,7 @@ const ChatScreen = () => {
 
   const renderMessage = ({ item, index }) => {
     // Check if the message is a user message or default
-    const isUserMessage = item.role==="user";
+    const isUserMessage = item.role === "user";
 
     // Generate a timestamp for every message
     const timestamp = item.timestamp
@@ -132,7 +142,8 @@ const ChatScreen = () => {
   };
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar hidden />
       <View
         style={{
           flexDirection: "row",
@@ -207,7 +218,7 @@ const ChatScreen = () => {
           </View>
         </ImageBackground>
       </KeyboardAvoidingView>
-    </>
+    </SafeAreaView>
   );
 };
 
