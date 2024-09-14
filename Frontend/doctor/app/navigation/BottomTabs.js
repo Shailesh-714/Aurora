@@ -15,6 +15,7 @@ import ChatScreen from "../screens/ChatScreen";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Dashboard from "../screens/Dashboard";
 
 const TabArr = [
   {
@@ -22,7 +23,7 @@ const TabArr = [
     label: "Home",
     type: Icons.Feather,
     icon: "home",
-    component: ChatScreen,
+    component: HomeScreen,
     color: "#5BB2D0",
   },
   {
@@ -39,7 +40,7 @@ const TabArr = [
     label: "Community",
     type: Icons.Ionicons,
     icon: "people-outline",
-    component: HomeScreen,
+    component: ColorScreen,
     color: "#8773BB",
   },
   {
@@ -47,7 +48,7 @@ const TabArr = [
     label: "Activity",
     type: Icons.Feather,
     icon: "activity",
-    component: ColorScreen,
+    component: Dashboard,
     color: "#F14C6E",
   },
 
@@ -56,7 +57,7 @@ const TabArr = [
     label: "Account",
     type: Icons.FontAwesome,
     icon: "user-circle-o",
-    component: LoginScreen,
+    component: ColorScreen,
     color: "#F6AD3E",
   },
 ];

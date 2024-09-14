@@ -5,6 +5,7 @@ import Styles from "./Styles";
 import Colors from "./Colors";
 import MyHeader from "./MyHeader";
 import Animated, { FadeIn, useAnimatedRef } from "react-native-reanimated";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ColorScreen({ route, navigation }) {
   const viewRef = useAnimatedRef(null);
@@ -43,7 +44,7 @@ export default function ColorScreen({ route, navigation }) {
         onPressMenu={() => navigation.goBack()}
         title={route.name}
         right="more-vertical"
-        onRightPress={() => console.log("right")}
+        onRightPress={() => navigation.navigate("ChatScreen")}
       />
       <View style={[Styles.container, { backgroundColor: bgColor }]}></View>
     </Animated.View>

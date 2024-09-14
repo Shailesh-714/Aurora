@@ -18,13 +18,39 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import { useState, useRef, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+
 const { width, height } = Dimensions.get("window");
 
-const ChatScreen = () => {
+const ChatScreen = ({ route }) => {
+  const { doctor } = route.params;
   const screenWidth = useWindowDimensions().width;
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const flatListRef = useRef(null);
+
+  const loadHistory = async () => {
+    const chatHist = await AsyncStorage.getItem(`history${doctor.value}`);
+    console.log(`hhhhhhhhhhhhhhhhhhhh${chatHist}`);
+    if (chatHist) {
+      const parsedHist = JSON.parse(chatHist);
+      setMessages(
+        parsedHist.map((msg, index) => ({
+          id: index.toString(),
+          role: msg.role,
+          text: msg.content,
+          timestamp: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        }))
+      );
+      scrollToEnd();
+    }
+  };
+  useEffect(() => {
+    loadHistory();
+  }, [doctor.value]);
 
   const sendMessage = async () => {
     try {
@@ -47,35 +73,57 @@ const ChatScreen = () => {
         setInputText("");
         scrollToEnd();
 
-        const prevHist = await AsyncStorage.getItem("history");
+        const prevHist = await AsyncStorage.getItem(`history${doctor.value}`);
         const chatHist = prevHist ? JSON.parse(prevHist) : [];
         chatHist.push({ role: "user", content: prompt });
-        const response = await axios.post(
-          "https://artistic-sunbird-actively.ngrok-free.app/api/chat",
-          {
-            model: "psychatrist",
-            messages: [{ role: "user", content: prompt }],
-            stream: false,
-          }
-        );
-        const botMessage = response?.data?.message?.content;
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: Date.now().toString(),
-            role: "assistant",
-            text: botMessage,
-            timestamp: timestamp,
-          },
-        ]);
-        chatHist.push({ role: "assistant", content: botMessage });
-        await AsyncStorage.setItem("history", JSON.stringify(chatHist));
-        console.log(chatHist);
-        scrollToEnd();
+        const promptMessageHist = chatHist.slice(-10);
+        try {
+          const response = await axios.post(
+            "https://artistic-sunbird-actively.ngrok-free.app/api/chat",
+            {
+              model: doctor.value,
+              messages: promptMessageHist,
+              stream: false,
+            }
+          );
+          const botMessage = response?.data?.message?.content;
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: Date.now().toString(),
+              role: "assistant",
+              text: botMessage,
+              timestamp: timestamp,
+            },
+          ]);
+          chatHist.push({ role: "assistant", content: botMessage });
+          await AsyncStorage.setItem(
+            `history${doctor.value}`,
+            JSON.stringify(chatHist)
+          );
+          console.log(await AsyncStorage.getItem(`history${doctor.value}`));
+          scrollToEnd();
+        } catch (error) {
+          const botMessage = "Sorry, Something went wrong!";
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: Date.now().toString(),
+              role: "assistant",
+              text: botMessage,
+              timestamp: timestamp,
+            },
+          ]);
+          chatHist.push({ role: "assistant", content: botMessage });
+          await AsyncStorage.setItem(
+            `history${doctor.value}`,
+            JSON.stringify(chatHist)
+          );
+          console.log(await AsyncStorage.getItem(`history${doctor.value}`));
+          scrollToEnd();
+        }
       }
-    } catch (err) {
-      console.log(err);
-    }
+    } catch (err) { console.log(err)}
   };
 
   const scrollToEnd = () => {
@@ -85,14 +133,11 @@ const ChatScreen = () => {
   };
 
   useEffect(() => {
-    scrollToEnd(); // Scroll to the end when the component first mounts or when messages change
+    scrollToEnd();
   }, [messages]);
 
   const renderMessage = ({ item, index }) => {
-    // Check if the message is a user message or default
     const isUserMessage = item.role === "user";
-
-    // Generate a timestamp for every message
     const timestamp = item.timestamp
       ? item.timestamp
       : new Date().toLocaleTimeString([], {
@@ -140,16 +185,16 @@ const ChatScreen = () => {
 
     return currentTimestamp !== previousTimestamp;
   };
+  const navigation = useNavigation();
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <StatusBar hidden />
+      <StatusBar backgroundColor="white" barStyle={"dark-content"} />
       <View
         style={{
           flexDirection: "row",
           minWidth: screenWidth,
           alignItems: "center",
-          justifyContent: "center",
           backgroundColor: "white",
           paddingBottom: 10,
         }}
@@ -158,65 +203,72 @@ const ChatScreen = () => {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "center",
+            marginHorizontal: 15,
+            paddingTop: 5,
+            gap: 15,
           }}
         >
+          <View
+            style={{
+              display: "flex",
+            }}
+          >
+            <Ionicons
+              name="arrow-back"
+              size={24}
+              color="#ff7676"
+              onPress={() => navigation.goBack()}
+            />
+          </View>
           <Image
-            style={{ width: 35, height: 35 }}
-            source={require("../assets/emologo.png")}
+            style={{ width: 35, height: 35, borderRadius: 100 }}
+            source={{ uri: doctor.image }}
           />
           <Text
             style={{
-              color: "black",
+              color: "#ff7676",
               fontSize: 20,
               fontWeight: "500",
               marginRight: 10,
               paddingLeft: 5,
             }}
           >
-            Emo
+            {doctor.name}
           </Text>
-        </View>
-        <View
-          style={{
-            display: "flex",
-            position: "absolute",
-            left: screenWidth * 0.05,
-          }}
-        >
-          <Ionicons name="arrow-back" size={24} color="black" />
         </View>
       </View>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <ImageBackground
-          source={require("../assets/chat-back.png")} // Replace with your background image
-          style={styles.backgroundImage}
-        >
-          <View style={styles.container}>
-            <FlatList
-              ref={flatListRef}
-              data={messages}
-              renderItem={renderMessage}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={false}
-              onContentSizeChange={scrollToEnd} // Ensure it scrolls to the end when content size changes
+        <View style={styles.container}>
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            renderItem={renderMessage}
+            keyExtractor={(item) => item.id}
+            showsVerticalScrollIndicator={false}
+            onContentSizeChange={scrollToEnd}
+          />
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Type your message"
             />
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                value={inputText}
-                onChangeText={setInputText}
-                placeholder="Type your message"
-              />
-              <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-                <Feather name="send" size={24} color="#48948a" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+              <Feather name="send" size={24} color="#ff7676" />
+            </TouchableOpacity>
           </View>
-        </ImageBackground>
+        </View>
+        <View
+          style={{ backgroundColor: "white", padding: 8, alignItems: "center" }}
+        >
+          <Text style={{ color: "#ff7676", fontSize: 16, fontWeight: "bold" }}>
+            {doctor.value.toUpperCase()}
+          </Text>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -228,13 +280,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: "2.5%",
+    backgroundColor: "#f8dedd",
   },
   backgroundImage: {
     flex: 1,
     resizeMode: "cover", // This will ensure the image covers the entire background
   },
   messageContainer: {
-    padding: "2.5%",
+    paddingHorizontal: "4%",
+    paddingVertical: "2.5%",
     borderRadius: 20,
     marginVertical: "1%",
     position: "relative",
@@ -245,7 +299,7 @@ const styles = StyleSheet.create({
     width: "85%",
   },
   userMessage: {
-    backgroundColor: "#74b9b0",
+    backgroundColor: "#ff7676",
     alignSelf: "flex-end",
     maxWidth: "85%",
   },
@@ -269,6 +323,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: width * 0.02,
     paddingTop: "2%",
+    paddingBottom: "0.5%",
     paddingHorizontal: "1.8%",
   },
   input: {
@@ -303,6 +358,6 @@ const styles = StyleSheet.create({
     borderTopColor: "transparent", // Top color transparent (triangle will point right)
     borderLeftColor: "transparent", // No left color
     borderRightWidth: 18, // Tail width (right side)
-    borderRightColor: "#74b9b0", // Tail color matches user message background
+    borderRightColor: "#ff7676", // Tail color matches user message background
   },
 });
