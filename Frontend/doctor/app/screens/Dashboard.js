@@ -11,6 +11,7 @@ import {
 import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
 import * as Progress from "react-native-progress";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const chatList = [
   {
@@ -56,8 +57,9 @@ const Dashboard = () => {
       />
 
       <ScrollView>
+        <View style={{margin:20}}>
         <View
-          style={{ backgroundColor: "white", borderRadius: 20, padding: 20 }}
+          style={{ backgroundColor: "white", borderRadius: 20, padding: 20,   }}
         >
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>Dashboard</Text>
           <View
@@ -75,61 +77,132 @@ const Dashboard = () => {
                 justifyContent: "space-around",
               }}
             >
+             <View style={{}}><Text style={{fontSize:10, padding:"1%", fontWeight:500, color:"#888"}}>Food</Text>
               <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
+
               <Progress.Bar
                 progress={0.4}
                 borderWidth={0}
                 color={"#5BB2D0"}
                 animated={true}
                 animationConfig={{ bounciness: 1 }}
-              /></View>
+              /></View></View>
+               <View style={{}}><Text style={{fontSize:10, padding:"1%", fontWeight:500, color:"#888"}}>Mental</Text>
               <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
-              <Progress.Bar
-                progress={0.5}
-                borderWidth={0}
-                color={"#5BB2D0"}
-                animated={true}
-                animationConfig={{ bounciness: 1 }}
-              /></View>
-              <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
-              <Progress.Bar
-                progress={0.7}
-                borderWidth={0}
-                color={"#5BB2D0"}
-                animated={true}
-                animationConfig={{ bounciness: 1 }}
-              /></View>
-              <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
+
               <Progress.Bar
                 progress={0.3}
                 borderWidth={0}
                 color={"#5BB2D0"}
                 animated={true}
                 animationConfig={{ bounciness: 1 }}
-              /></View>
+              /></View></View>
+               <View style={{}}><Text style={{fontSize:10, padding:"1%", fontWeight:500, color:"#888" }}>Skin</Text>
+              <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
+
+              <Progress.Bar
+                progress={0.8}
+                borderWidth={0}
+                color={"#5BB2D0"}
+                animated={true}
+                animationConfig={{ bounciness: 1 }}
+              /></View></View>
+               <View style={{}}><Text style={{fontSize:10, padding:"1%", fontWeight:500, color:"#888" }}>Exercise</Text>
+              <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
+
+              <Progress.Bar
+                progress={0.1}
+                borderWidth={0}
+                color={"#5BB2D0"}
+                animated={true}
+                animationConfig={{ bounciness: 1 }}
+              /></View></View>
             </View>
             <View
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flex: 1,
-              }}
-            >
-              <Progress.Circle
-                size={100}
-                progress={0.7}
-                borderWidth={0}
-                thickness={7}
-                color="#F14C6E"
-                showsText={true}
-                strokeCap="round"
-                formatText={() => {
-                  return `${0.7 * 100}%`;
-                }}
-              />
-            </View>
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1,
+  }}
+>
+  <Progress.Circle
+    size={100}
+    progress={0.7}
+    borderWidth={0}
+    thickness={7}
+    color="#F14C6E"
+    strokeCap="round"
+    showsText={false}  
+  />
+  
+  {}
+  <View
+    style={{
+      position: "absolute",
+      alignItems: "center",
+    }}
+  >
+    {}
+    <Text
+      style={{
+        fontSize: 20,  
+        fontWeight: "bold",
+        color: "#F14C6E", 
+      }}
+    >
+      {`${0.7 * 100}%`}
+    </Text>
+
+    {}
+    <Text
+      style={{
+        fontSize: 12,  
+        color: "#888",  
+        marginTop: 2,   
+      }}
+    >
+      Health
+    </Text>
+  </View>
+</View>
+
           </View>
+        </View>
+        <View style={{flexDirection:"row", gap:20, marginVertical:20}}>
+          <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20,  flex:1}}>
+          <View>
+          <View style={{marginBottom:5}}>
+            <Text style={{fontSize: 16, fontWeight: "bold"}}>Steps</Text>
+          </View>
+          <View style={{marginBottom:5, flexDirection:"row", alignItems:"center"}}>
+          <MaterialCommunityIcons name="shoe-sneaker" size={30} color="#F27559" />
+            <Text style={{marginHorizontal:10, fontSize:17, fontWeight: "500"}}>4668</Text>
+          </View>
+          <View style={{marginBottom:10}}>
+            <Text style={{fontSize:11}}>Goal: 10,000</Text>
+          </View>
+
+          <View style={{alignItems:"flex-start"}}>
+          <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
+              <Progress.Bar
+                progress={0.4}
+                width={125}
+                borderWidth={0}
+                color={"#F27559"}
+                animated={true}
+                animationConfig={{ bounciness: 1 }}
+              /></View>
+              </View>
+          </View>
+          </View>
+          <View style={{ backgroundColor: "white", borderRadius: 20, padding: 20, flex:1}}>
+            <View></View>
+            <View></View>
+            <View></View>
+
+          </View>
+        </View>
         </View>
       </ScrollView>
     </View>
