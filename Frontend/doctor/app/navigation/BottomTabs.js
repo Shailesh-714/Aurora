@@ -13,7 +13,7 @@ import * as Animatable from "react-native-animatable";
 import { useTheme } from "@react-navigation/native";
 import ChatScreen from "../screens/ChatScreen";
 import LoginScreen from "../screens/LoginScreen";
-import HomeScreen from "../screens/HomeScreen";
+import ChatListScreen from "../screens/ChatListScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Dashboard from "../screens/Dashboard";
 import ExploreScreen from "../screens/ExploreScreen";
@@ -41,7 +41,7 @@ const TabArr = [
     label: "Community",
     type: Icons.Ionicons,
     icon: "people-outline",
-    component: HomeScreen,
+    component: ChatListScreen,
     color: "#8773BB",
   },
   {

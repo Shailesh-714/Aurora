@@ -12,7 +12,7 @@ const chatList = [
 ];
 
 
-const HomeScreen = () => {
+const ChatListScreen = () => {
   const navigation = useNavigation();
   const renderChatItem = ({ item }) => (
     <TouchableOpacity
@@ -33,7 +33,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <MyHeader
         onPressMenu={() => navigation.goBack()}
-        title="Home"
+        title="Chats"
         right="more-vertical"
         onRightPress={() => {}}
       />
@@ -49,7 +49,7 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default ChatListScreen;
 
 const styles = StyleSheet.create({
   container: {
