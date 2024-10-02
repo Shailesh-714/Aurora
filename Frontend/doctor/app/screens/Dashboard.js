@@ -619,6 +619,13 @@ const Dashboard = () => {
               </View>
             </View>
           </View>
+          <View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 20,
+              padding: 30,
+            }}
+          ></View>
         </View>
       </ScrollView>
     </View>
