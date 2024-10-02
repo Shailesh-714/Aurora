@@ -79,7 +79,6 @@ const Dashboard = () => {
             >
              <View style={{}}><Text style={{fontSize:10, padding:"1%", fontWeight:500, color:"#888"}}>Food</Text>
               <View style={{backgroundColor:"#f2f2f2", borderRadius:50}}>
-
               <Progress.Bar
                 progress={0.4}
                 borderWidth={0}
@@ -176,7 +175,7 @@ const Dashboard = () => {
             <Text style={{fontSize: 16, fontWeight: "bold"}}>Steps</Text>
           </View>
           <View style={{marginBottom:5, flexDirection:"row", alignItems:"center"}}>
-          <MaterialCommunityIcons name="shoe-sneaker" size={30} color="#F27559" />
+          <MaterialCommunityIcons name="shoe-sneaker" size={30} color="#F27559"/>
             <Text style={{marginHorizontal:10, fontSize:17, fontWeight: "500"}}>4668</Text>
           </View>
           <View style={{marginBottom:10}}>

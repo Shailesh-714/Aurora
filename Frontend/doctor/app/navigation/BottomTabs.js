@@ -16,6 +16,7 @@ import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Dashboard from "../screens/Dashboard";
+import ExploreScreen from "../screens/ExploreScreen";
 
 const TabArr = [
   {
@@ -31,7 +32,7 @@ const TabArr = [
     label: "Health",
     type: Icons.MaterialCommunityIcons,
     icon: "food-apple-outline",
-    component: ColorScreen,
+    component: ExploreScreen,
     color: "#F27559",
   },
 
