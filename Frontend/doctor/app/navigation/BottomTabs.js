@@ -24,7 +24,7 @@ const TabArr = [
     label: "Home",
     type: Icons.Feather,
     icon: "home",
-    component: HomeScreen,
+    component: Dashboard,
     color: "#5BB2D0",
   },
   {
@@ -41,7 +41,7 @@ const TabArr = [
     label: "Community",
     type: Icons.Ionicons,
     icon: "people-outline",
-    component: ColorScreen,
+    component: HomeScreen,
     color: "#8773BB",
   },
   {
@@ -49,7 +49,7 @@ const TabArr = [
     label: "Activity",
     type: Icons.Feather,
     icon: "activity",
-    component: Dashboard,
+    component: ColorScreen,
     color: "#F14C6E",
   },
 

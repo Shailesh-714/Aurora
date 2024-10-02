@@ -128,7 +128,7 @@ const ExploreScreen = () => {
     <View style={styles.container}>
       <MyHeader
         onPressMenu={() => navigation.goBack()}
-        title="Home"
+        title="Explore"
         right="more-vertical"
         onRightPress={() => {}}
       />
