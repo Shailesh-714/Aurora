@@ -95,7 +95,7 @@ const ExploreScreen = () => {
         right="more-vertical"
         onRightPress={() => {}}
       />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollview}>
         <MasonryList
           data={data}
           keyExtractor={(item, index) => index.toString()}
@@ -115,8 +115,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF1EB",
-    marginHorizontal: 5,
     gap:5
+  },
+  scrollview:{
+margin:5
   },
   cardContainer: {
     borderRadius: 10,

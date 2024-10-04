@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import { StyleSheet, View } from "react-native";
 import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
 import * as SplashScreen from "expo-splash-screen";
@@ -7,39 +7,33 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
+// Prevent the splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
+  const [user, setUser] = useState(null);
   const [appIsReady, setAppIsReady] = useState(false);
-  const [user, setUser] = useState();
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        await SplashScreen.preventAutoHideAsync().then(
-          () => setAppIsReady(true),
-          onAuthStateChanged(auth, (currentuser) => {
-            if (currentuser) {
-              setUser(currentuser);
-            } else {
-              setUser(false);
-            }
-          })
-        );
-      } catch (error) {
-        console.warn(error);
-      }
-    }
+    // Check user authentication status
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAppIsReady(true); // Once user status is known, app is ready
+    });
 
-    prepare();
+    // Cleanup auth listener on unmount
+    return () => unsubscribeAuth();
   }, []);
 
-  const onLayoutRootView = async () => {
+  const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
+      // Hide the splash screen after the app is ready
       await SplashScreen.hideAsync();
     }
-  };
+  }, [appIsReady]);
 
   if (!appIsReady) {
-    return null;
+    return null; // Don't render anything until the app is ready
   }
 
   return (
