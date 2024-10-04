@@ -20,37 +20,8 @@ import {
   Ionicons,
   FontAwesome6,
 } from "@expo/vector-icons";
-
-const chatList = [
-  {
-    id: "1",
-    name: "Dr. John Doe",
-    value: "psychatrist",
-    description: "Specialist in Psychiatry",
-    image: "https://randomuser.me/api/portraits/men/1.jpg",
-  },
-  {
-    id: "2",
-    name: "Dr. Jane Smith",
-    value: "pediatrisian",
-    description: "Expert Pediatrician",
-    image: "https://randomuser.me/api/portraits/women/8.jpg",
-  },
-  {
-    id: "3",
-    name: "Dr. Mike Johnson",
-    value: "dermatologist",
-    description: "Experienced Dermatologist",
-    image: "https://randomuser.me/api/portraits/men/7.jpg",
-  },
-  {
-    id: "4",
-    name: "Dr. Sarah Lee",
-    value: "gynaecologist",
-    description: "Gynaecology Specialist",
-    image: "https://randomuser.me/api/portraits/women/0.jpg",
-  },
-];
+import Steps from "../components/tracks/Steps";
+import Exercise from "../components/tracks/Exercise";
 
 const Dashboard = () => {
   const navigation = useNavigation();
@@ -189,109 +160,8 @@ const Dashboard = () => {
             </View>
           </View>
           <View style={{ flexDirection: "row", gap: 20, marginVertical: 20 }}>
-            <View
-              style={{
-                backgroundColor: "white",
-                borderRadius: 20,
-                padding: 20,
-                flex: 1,
-              }}
-            >
-              <View>
-                <View style={{ marginBottom: 5 }}>
-                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                    Steps
-                  </Text>
-                </View>
-                <View
-                  style={{
-                    marginBottom: 5,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="shoe-sneaker"
-                    size={30}
-                    color="#F27559"
-                  />
-                  <Text
-                    style={{
-                      marginHorizontal: 10,
-                      fontSize: 17,
-                      fontWeight: "500",
-                    }}
-                  >
-                    4668
-                  </Text>
-                </View>
-                <View style={{ marginBottom: 10 }}>
-                  <Text style={{ fontSize: 11 }}>Goal: 10,000</Text>
-                </View>
-
-                <View style={{ alignItems: "flex-start" }}>
-                  <ProgressBar color={"#F27559"} progress={0.7} />
-                </View>
-              </View>
-            </View>
-            <View
-              style={{
-                backgroundColor: "white",
-                borderRadius: 20,
-                padding: 20,
-                flex: 1,
-              }}
-            >
-              <View
-                style={{
-                  marginBottom: 5,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                  Exercise
-                </Text>
-                <AntDesign name="pluscircleo" size={18} color="black" />
-              </View>
-
-              <View
-                style={{
-                  marginVertical: 8,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <FontAwesome5 name="fire" size={22} color="#F6AD3E" />
-                <Text
-                  style={{
-                    marginHorizontal: 10,
-                    fontSize: 14,
-                    fontWeight: "500",
-                  }}
-                >
-                  25 Calories
-                </Text>
-              </View>
-              <View
-                style={{
-                  marginVertical: 8,
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <AntDesign name="clockcircle" size={20} color="#F6AD3E" />
-                <Text
-                  style={{
-                    marginHorizontal: 10,
-                    fontSize: 14,
-                    fontWeight: "500",
-                  }}
-                >
-                  01:00 hr
-                </Text>
-              </View>
-            </View>
+            <Steps />
+            <Exercise />
           </View>
           <View
             style={{
