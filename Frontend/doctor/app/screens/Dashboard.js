@@ -508,40 +508,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF1EB",
-    gap: 15,
-  },
-  chatContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    padding: 10,
-    borderRadius: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  chatTextContainer: {
-    marginLeft: 10,
-    flex: 1,
-  },
-  chatName: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  chatDescription: {
-    color: "#666",
-    fontSize: 14,
-  },
-  contentContainerStyle: {
-    paddingBottom: 20,
-  },
+    gap: 5,
+  }
+
 });
