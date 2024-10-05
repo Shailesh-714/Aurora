@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
+import { AppProvider } from "./app/context/AppContext";
 const { width, height } = Dimensions.get("window");
 SplashScreen.preventAutoHideAsync();
 
@@ -16,7 +17,7 @@ export default function App() {
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setAppIsReady(true); 
+      setAppIsReady(true);
     });
     return () => unsubscribeAuth();
   }, []);
@@ -33,14 +34,17 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <View
-        onLayout={onLayoutRootView}
-        style={{
-          flex: 1,
-          minHeight: height
-        }}>
-        {user ? <StackNavigator /> : <LoginScreen />}
-      </View>
+      <AppProvider>
+        <View
+          onLayout={onLayoutRootView}
+          style={{
+            flex: 1,
+            minHeight: height,
+          }}
+        >
+          {user ? <StackNavigator /> : <LoginScreen />}
+        </View>
+      </AppProvider>
     </SafeAreaProvider>
   );
 }
