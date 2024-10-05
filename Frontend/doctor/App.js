@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
 import * as SplashScreen from "expo-splash-screen";
@@ -6,37 +6,26 @@ import { useCallback, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
+const { width, height } = Dimensions.get("window");
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [user, setUser] = useState(null);
   const [appIsReady, setAppIsReady] = useState(false);
-  const [user, setUser] = useState();
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        await SplashScreen.preventAutoHideAsync().then(
-          () => setAppIsReady(true),
-          onAuthStateChanged(auth, (currentuser) => {
-            if (currentuser) {
-              setUser(currentuser);
-            } else {
-              setUser(false);
-            }
-          })
-        );
-      } catch (error) {
-        console.warn(error);
-      }
-    }
-
-    prepare();
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAppIsReady(true); 
+    });
+    return () => unsubscribeAuth();
   }, []);
 
-  const onLayoutRootView = async () => {
+  const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
       await SplashScreen.hideAsync();
     }
-  };
+  }, [appIsReady]);
 
   if (!appIsReady) {
     return null;
@@ -48,8 +37,8 @@ export default function App() {
         onLayout={onLayoutRootView}
         style={{
           flex: 1,
-        }}
-      >
+          minHeight: height
+        }}>
         {user ? <StackNavigator /> : <LoginScreen />}
       </View>
     </SafeAreaProvider>

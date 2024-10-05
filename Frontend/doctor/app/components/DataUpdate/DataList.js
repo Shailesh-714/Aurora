@@ -1,5 +1,6 @@
 import {
   FlatList,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
   TextInput,
@@ -17,15 +18,17 @@ const DataList = ({ data, setDetailsTab }) => {
   );
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TextInput
-          placeholder="Search here..."
-          placeholderTextColor={"grey"}
-          value={query}
-          onChangeText={setQuery}
-          style={styles.input}
-        />
-      </View>
+      <KeyboardAvoidingView>
+        <View style={styles.header}>
+          <TextInput
+            placeholder="Search here..."
+            placeholderTextColor={"grey"}
+            value={query}
+            onChangeText={setQuery}
+            style={styles.input}
+          />
+        </View>
+      </KeyboardAvoidingView>
       <FlatList
         data={filteredData}
         showsVerticalScrollIndicator={false}

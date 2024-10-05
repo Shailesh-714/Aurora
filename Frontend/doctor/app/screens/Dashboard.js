@@ -7,6 +7,8 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
+  TextInput,
 } from "react-native";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +24,7 @@ import {
 } from "@expo/vector-icons";
 import Steps from "../components/tracks/Steps";
 import Exercise from "../components/tracks/Exercise";
-
+const { height } = Dimensions.get("window");
 const Dashboard = () => {
   const navigation = useNavigation();
 
@@ -36,7 +38,7 @@ const Dashboard = () => {
       />
 
       <ScrollView>
-        <View style={{ margin: 20 }}>
+        <View style={{ marginHorizontal: 20, marginVertical: 15 }}>
           <View
             style={{ backgroundColor: "white", borderRadius: 20, padding: 20 }}
           >
@@ -427,7 +429,6 @@ const Dashboard = () => {
                   </Text>
                 </View>
               </View>
-
               <View>
                 <AntDesign name="pluscircleo" size={18} color="black" />
               </View>
@@ -508,40 +509,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFF1EB",
-    gap: 15,
-  },
-  chatContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    padding: 10,
-    borderRadius: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 2,
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  chatTextContainer: {
-    marginLeft: 10,
-    flex: 1,
-  },
-  chatName: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  chatDescription: {
-    color: "#666",
-    fontSize: 14,
-  },
-  contentContainerStyle: {
-    paddingBottom: 20,
+    gap: 5,
   },
 });

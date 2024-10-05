@@ -31,7 +31,6 @@ const ChatScreen = ({ route }) => {
 
   const loadHistory = async () => {
     const chatHist = await AsyncStorage.getItem(`history${doctor.value}`);
-    console.log(`hhhhhhhhhhhhhhhhhhhh${chatHist}`);
     if (chatHist) {
       const parsedHist = JSON.parse(chatHist);
       setMessages(
