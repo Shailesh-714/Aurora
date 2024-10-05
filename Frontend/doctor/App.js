@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
 import * as SplashScreen from "expo-splash-screen";
@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
-
+const { width, height } = Dimensions.get("window");
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -37,6 +37,7 @@ export default function App() {
         onLayout={onLayoutRootView}
         style={{
           flex: 1,
+          minHeight: height
         }}>
         {user ? <StackNavigator /> : <LoginScreen />}
       </View>

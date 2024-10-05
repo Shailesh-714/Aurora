@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "flex-end",
+    minHeight:height,
   },
   modalBackground: {
     position: "absolute",

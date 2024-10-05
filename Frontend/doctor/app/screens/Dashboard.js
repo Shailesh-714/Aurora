@@ -7,6 +7,8 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
+  TextInput,
 } from "react-native";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
@@ -22,7 +24,7 @@ import {
 } from "@expo/vector-icons";
 import Steps from "../components/tracks/Steps";
 import Exercise from "../components/tracks/Exercise";
-
+const { height } = Dimensions.get("window");
 const Dashboard = () => {
   const navigation = useNavigation();
 
@@ -36,7 +38,7 @@ const Dashboard = () => {
       />
 
       <ScrollView>
-        <View style={{ margin: 20 }}>
+        <View style={{ marginHorizontal: 20, marginVertical: 15 }}>
           <View
             style={{ backgroundColor: "white", borderRadius: 20, padding: 20 }}
           >
@@ -427,7 +429,6 @@ const Dashboard = () => {
                   </Text>
                 </View>
               </View>
-
               <View>
                 <AntDesign name="pluscircleo" size={18} color="black" />
               </View>
@@ -509,6 +510,5 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFF1EB",
     gap: 5,
-  }
-
+  },
 });

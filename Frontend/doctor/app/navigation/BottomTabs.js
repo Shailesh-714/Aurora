@@ -1,6 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useEffect, useRef } from "react";
 import {
+  Dimensions,
+  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -11,14 +13,11 @@ import Colors from "../components/tab_bar/Colors";
 import ColorScreen from "../components/tab_bar/ColorScreen";
 import * as Animatable from "react-native-animatable";
 import { useTheme } from "@react-navigation/native";
-import ChatScreen from "../screens/ChatScreen";
-import LoginScreen from "../screens/LoginScreen";
 import ChatListScreen from "../screens/ChatListScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Dashboard from "../screens/Dashboard";
 import ExploreScreen from "../screens/ExploreScreen";
 import ActivityScreen from "../screens/ActivityScreen";
-
+const { width, height } = Dimensions.get("window");
 const TabArr = [
   {
     route: "Home",
@@ -150,7 +149,7 @@ const TabButton = (props) => {
 
 export default function AnimTab1() {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 ,minHeight: height}}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
