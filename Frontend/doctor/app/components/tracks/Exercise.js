@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
 import PopUp from "../popup/PopUp"; // Import the updated PopUp component
 import { ExerciseData } from "../../data/OptionsData";
+import { AppContext } from "../../context/AppContext";
 
 const Exercise = () => {
   const [modalVisible, setModalVisible] = useState(false); // State to manage modal visibility
+  const { exerData, setExerData } = useContext(AppContext);
 
   const handleModalOpen = () => {
     setModalVisible(true);
@@ -80,6 +82,8 @@ const Exercise = () => {
         onClose={handleModalClose}
         title={"Exercises"}
         data={ExerciseData}
+        value={exerData}
+        setValue={setExerData}
       />
     </View>
   );

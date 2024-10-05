@@ -7,17 +7,35 @@ import {
   Modal,
   Dimensions,
   Animated,
+  TextInput,
+  FlatList,
+  KeyboardAvoidingView,
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import DataList from "../DataUpdate/DataList";
-import ExeDetails from "../DataUpdate/ExeDetails";
+import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 const { height } = Dimensions.get("window");
 
-const PopUp = ({ visible, onClose, title, data }) => {
+const PopUp = ({ visible, onClose, title, data, value, setValue }) => {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim, setSlideAnim] = useState(new Animated.Value(height));
   const [detailsTab, setDetailsTab] = useState(false);
+  const [selectExercise, setSelectExercise] = useState(null);
+  const [query, setQuery] = useState("");
+  const [minutes, setMinutes] = useState("");
+
+  const handleSelectExer = (item) => {
+    setDetailsTab(true);
+    setSelectExercise(item); // Now item is correctly passed
+  };
+
+  const totCalories = (minutes) => {
+    return selectExercise ? minutes * selectExercise.caloriesPerMinute : 0;
+  };
+
+  // Filter exercises based on the search query
+  const filteredData = data.filter((item) =>
+    item.name.toLowerCase().includes(query.toLowerCase())
+  );
 
   useEffect(() => {
     if (visible) {
@@ -72,7 +90,71 @@ const PopUp = ({ visible, onClose, title, data }) => {
           ]}
         >
           {detailsTab ? (
-            <ExeDetails setDetailsTab={setDetailsTab} onClose={onClose} />
+            /*updateTab*/
+            <View
+              style={{
+                margin: 20,
+                height: height * 0.8,
+                marginVertical: 30,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <TouchableOpacity
+                  onPress={() => {
+                    setDetailsTab(false), setMinutes(0);
+                  }}
+                >
+                  <Ionicons
+                    name="chevron-back-outline"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setDetailsTab(false), setMinutes(0);
+                  }}
+                >
+                  <MaterialIcons name="done" size={24} color="black" />
+                </TouchableOpacity>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginVertical: 30,
+                  marginHorizontal: 10,
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>Minutes Performed</Text>
+                <TextInput
+                  placeholder="e.g. 30"
+                  placeholderTextColor={"grey"}
+                  style={{ fontSize: 16 }}
+                  keyboardType="numeric"
+                  value={minutes} // Correct binding of `minutes`
+                  onChangeText={(value) => setMinutes(value)}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+
+                  marginHorizontal: 10,
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>Calories Burned</Text>
+                <Text style={{ fontSize: 16 }}>
+                  {totCalories(parseInt(minutes) || 0)}
+                </Text>
+              </View>
+            </View>
           ) : (
             <View style={styles.container}>
               <View
@@ -90,7 +172,30 @@ const PopUp = ({ visible, onClose, title, data }) => {
                 </TouchableOpacity>
               </View>
               {/* DataList Component to display exercise data */}
-              <DataList data={data} setDetailsTab={setDetailsTab} />
+              <View>
+                <KeyboardAvoidingView>
+                  <View style={styles.header}>
+                    <TextInput
+                      placeholder="Search here..."
+                      placeholderTextColor={"grey"}
+                      value={query}
+                      onChangeText={setQuery}
+                      style={styles.input}
+                    />
+                  </View>
+                </KeyboardAvoidingView>
+                <FlatList
+                  data={filteredData}
+                  showsVerticalScrollIndicator={false}
+                  snapToEnd
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => handleSelectExer(item)}>
+                      <Text style={styles.item}>{item.name}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              </View>
             </View>
           )}
         </Animated.View>
@@ -103,7 +208,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "flex-end",
-    minHeight:height,
+    minHeight: height,
   },
   modalBackground: {
     position: "absolute",
@@ -122,6 +227,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 30,
+    padding: 15,
+  },
+  item: {
+    margin: 15,
   },
 });
 
