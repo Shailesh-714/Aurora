@@ -21,24 +21,22 @@ const PopUp = ({ visible, onClose, title, data }) => {
 
   useEffect(() => {
     if (visible) {
-      // Start the open animations when modal is visible
       Animated.parallel([
         Animated.timing(fadeAnim, {
-          toValue: 1, // Fade to fully visible
+          toValue: 1,
           duration: 300,
           useNativeDriver: true,
         }),
         Animated.timing(slideAnim, {
-          toValue: 0, // Slide up to fully visible
+          toValue: 0,
           duration: 300,
           useNativeDriver: true,
         }),
       ]).start();
     } else {
-      // Start the close animations when modal is closed
       Animated.parallel([
         Animated.timing(fadeAnim, {
-          toValue: 0, // Fade out
+          toValue: 0,
           duration: 300,
           useNativeDriver: true,
         }),
@@ -74,7 +72,7 @@ const PopUp = ({ visible, onClose, title, data }) => {
           ]}
         >
           {detailsTab ? (
-            <ExeDetails />
+            <ExeDetails setDetailsTab={setDetailsTab} onClose={onClose} />
           ) : (
             <View style={styles.container}>
               <View
@@ -112,10 +110,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    height: height * 0.8, // Adjust the height to 80% of screen height
+    height: height * 0.8,
     backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

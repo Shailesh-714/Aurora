@@ -53,9 +53,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 30,
-    padding: 10,
+    padding: 15,
   },
   item: {
-    padding: 12,
+    margin: 15,
   },
 });
