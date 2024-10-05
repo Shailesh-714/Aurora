@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     gap:5
   },
   scrollview:{
-margin:5
+    margin:5
   },
   cardContainer: {
     borderRadius: 10,

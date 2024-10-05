@@ -7,7 +7,6 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
-// Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
@@ -15,25 +14,21 @@ export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
-    // Check user authentication status
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      setAppIsReady(true); // Once user status is known, app is ready
+      setAppIsReady(true); 
     });
-
-    // Cleanup auth listener on unmount
     return () => unsubscribeAuth();
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
-      // Hide the splash screen after the app is ready
       await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
 
   if (!appIsReady) {
-    return null; // Don't render anything until the app is ready
+    return null;
   }
 
   return (
@@ -42,8 +37,7 @@ export default function App() {
         onLayout={onLayoutRootView}
         style={{
           flex: 1,
-        }}
-      >
+        }}>
         {user ? <StackNavigator /> : <LoginScreen />}
       </View>
     </SafeAreaProvider>

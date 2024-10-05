@@ -17,6 +17,7 @@ import ChatListScreen from "../screens/ChatListScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Dashboard from "../screens/Dashboard";
 import ExploreScreen from "../screens/ExploreScreen";
+import ActivityScreen from "../screens/ActivityScreen";
 
 const TabArr = [
   {
@@ -49,7 +50,7 @@ const TabArr = [
     label: "Activity",
     type: Icons.Feather,
     icon: "activity",
-    component: ColorScreen,
+    component: ActivityScreen,
     color: "#F14C6E",
   },
 
