@@ -2,7 +2,6 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useEffect, useRef } from "react";
 import {
   Dimensions,
-  SafeAreaView,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -17,6 +16,7 @@ import ChatListScreen from "../screens/ChatListScreen";
 import Dashboard from "../screens/Dashboard";
 import ExploreScreen from "../screens/ExploreScreen";
 import ActivityScreen from "../screens/ActivityScreen";
+import { SafeAreaView } from "react-native-safe-area-context";
 const { width, height } = Dimensions.get("window");
 const TabArr = [
   {
