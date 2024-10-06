@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useContext, useState } from "react";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import PopUp from "../popup/PopUp"; // Import the updated PopUp component
+import ExercisePopUp from "../popup/ExercisePopUp"; 
 import { ExerciseData } from "../../data/OptionsData";
 import { AppContext } from "../../context/AppContext";
 
 const Exercise = () => {
-  const [modalVisible, setModalVisible] = useState(false); // State to manage modal visibility
-  const { exerData, setExerData } = useContext(AppContext);
+  const [modalVisible, setModalVisible] = useState(false); 
+  const {exerData, setExerData} = useContext(AppContext);
 
   const handleModalOpen = () => {
     setModalVisible(true);
@@ -54,7 +54,7 @@ const Exercise = () => {
             fontWeight: "500",
           }}
         >
-          25 Calories
+          {exerData.calories} Calories
         </Text>
       </View>
       <View
@@ -72,18 +72,16 @@ const Exercise = () => {
             fontWeight: "500",
           }}
         >
-          01:00 hr
+        {Math.floor(exerData.minutes / 60)}:{(exerData.minutes % 60).toString().padStart(2, '0')} hr
         </Text>
       </View>
 
       {/* Pass modalVisible, onClose, and data as props to PopUp */}
-      <PopUp
+      <ExercisePopUp
         visible={modalVisible}
         onClose={handleModalClose}
         title={"Exercises"}
         data={ExerciseData}
-        value={exerData}
-        setValue={setExerData}
       />
     </View>
   );

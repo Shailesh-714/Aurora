@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, TouchableOpacity } from 'react-native';
 import MyHeader from "../components/tab_bar/MyHeader";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const notifications = [
   { id: '1', title: 'New message from John', description: 'Hey, let’s catch up tomorrow at 10 AM.' },
@@ -19,7 +20,7 @@ const ActivityScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
         <MyHeader
         onPressMenu={() => navigation.goBack()}
         title="Notifications"
@@ -32,7 +33,7 @@ const ActivityScreen = () => {
         renderItem={renderItem}
         contentContainerStyle={styles.list}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

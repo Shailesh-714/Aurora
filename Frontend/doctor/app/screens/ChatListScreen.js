@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View, FlatList, Image, TouchableOpacity } from "react-native";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 
 const chatList = [
@@ -30,7 +31,7 @@ const ChatListScreen = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <MyHeader
         onPressMenu={() => navigation.goBack()}
         title="Chats"
@@ -45,7 +46,7 @@ const ChatListScreen = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.contentContainerStyle}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

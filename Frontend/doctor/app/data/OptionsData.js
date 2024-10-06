@@ -50,3 +50,5 @@ export const ExerciseData = [
   { id: "49", name: "Archery", caloriesPerMinute: 2 },
   { id: "50", name: "Judo", caloriesPerMinute: 11 },
 ];
+
+export const TrackFoodData = [{ id: "0", name: "water", caloriesPerMinute: 9 }];

@@ -17,6 +17,7 @@ import Dashboard from "../screens/Dashboard";
 import ExploreScreen from "../screens/ExploreScreen";
 import ActivityScreen from "../screens/ActivityScreen";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ProfileScreen from "../screens/ProfileScreen";
 const { width, height } = Dimensions.get("window");
 const TabArr = [
   {
@@ -58,7 +59,7 @@ const TabArr = [
     label: "Account",
     type: Icons.FontAwesome,
     icon: "user-circle-o",
-    component: ColorScreen,
+    component: ProfileScreen,
     color: "#F6AD3E",
   },
 ];
@@ -149,7 +150,7 @@ const TabButton = (props) => {
 
 export default function AnimTab1() {
   return (
-    <SafeAreaView style={{ flex: 1 ,minHeight: height}}>
+    <View style={{ flex: 1 ,minHeight: height}}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -170,7 +171,7 @@ export default function AnimTab1() {
           );
         })}
       </Tab.Navigator>
-    </SafeAreaView>
+    </View>
   );
 }
 

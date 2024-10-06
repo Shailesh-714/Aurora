@@ -6,6 +6,7 @@ import MasonryList from "@react-native-seoul/masonry-list";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
 import { data as initialData } from "../data/ExploreData";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // Utility function to shuffle array
 const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
@@ -60,7 +61,7 @@ const ExploreScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <MyHeader
         onPressMenu={() => navigation.goBack()}
         title="Explore"
@@ -120,7 +121,7 @@ const ExploreScreen = () => {
           />
         </Animated.View>
       </Modal>
-    </View>
+    </SafeAreaView>
   );
 };
 

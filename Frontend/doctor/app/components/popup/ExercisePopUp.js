@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -12,30 +12,40 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { AntDesign, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { AppContext } from "../../context/AppContext";
 
 const { height } = Dimensions.get("window");
 
-const PopUp = ({ visible, onClose, title, data, value, setValue }) => {
+const ExercisePopUp = ({ visible, onClose, title, data }) => {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim, setSlideAnim] = useState(new Animated.Value(height));
   const [detailsTab, setDetailsTab] = useState(false);
   const [selectExercise, setSelectExercise] = useState(null);
   const [query, setQuery] = useState("");
   const [minutes, setMinutes] = useState("");
+  const { exerData, setExerData } = useContext(AppContext);
 
   const handleSelectExer = (item) => {
     setDetailsTab(true);
-    setSelectExercise(item); // Now item is correctly passed
+    setSelectExercise(item);
   };
 
   const totCalories = (minutes) => {
     return selectExercise ? minutes * selectExercise.caloriesPerMinute : 0;
   };
 
-  // Filter exercises based on the search query
   const filteredData = data.filter((item) =>
     item.name.toLowerCase().includes(query.toLowerCase())
   );
+
+  const handleSave = () => {
+    setExerData({
+      calories: exerData.calories+totCalories(parseInt(minutes) || 0),
+      minutes: exerData.minutes+parseInt(minutes),
+    });
+    setMinutes(0);
+    setDetailsTab(false);
+  };
 
   useEffect(() => {
     if (visible) {
@@ -59,7 +69,7 @@ const PopUp = ({ visible, onClose, title, data, value, setValue }) => {
           useNativeDriver: true,
         }),
         Animated.timing(slideAnim, {
-          toValue: height, // Slide down out of view
+          toValue: height,
           duration: 300,
           useNativeDriver: true,
         }),
@@ -90,7 +100,6 @@ const PopUp = ({ visible, onClose, title, data, value, setValue }) => {
           ]}
         >
           {detailsTab ? (
-            /*updateTab*/
             <View
               style={{
                 margin: 20,
@@ -115,11 +124,7 @@ const PopUp = ({ visible, onClose, title, data, value, setValue }) => {
                     color="black"
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setDetailsTab(false), setMinutes(0);
-                  }}
-                >
+                <TouchableOpacity onPress={handleSave}>
                   <MaterialIcons name="done" size={24} color="black" />
                 </TouchableOpacity>
               </View>
@@ -137,7 +142,7 @@ const PopUp = ({ visible, onClose, title, data, value, setValue }) => {
                   placeholderTextColor={"grey"}
                   style={{ fontSize: 16 }}
                   keyboardType="numeric"
-                  value={minutes} // Correct binding of `minutes`
+                  value={minutes}
                   onChangeText={(value) => setMinutes(value)}
                 />
               </View>
@@ -194,6 +199,7 @@ const PopUp = ({ visible, onClose, title, data, value, setValue }) => {
                       <Text style={styles.item}>{item.name}</Text>
                     </TouchableOpacity>
                   )}
+                  contentContainerStyle={{ paddingBottom: 100 }}
                 />
               </View>
             </View>
@@ -237,11 +243,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 30,
-    padding: 15,
+    paddingVertical: 5,
+    paddingHorizontal:15
   },
   item: {
     margin: 15,
   },
 });
 
-export default PopUp;
+export default ExercisePopUp;
