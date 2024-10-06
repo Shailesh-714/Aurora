@@ -88,7 +88,7 @@ const ExploreScreen = () => {
                 {
                   translateY: slideAnim.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [600, 0], // From off-screen to fully visible
+                    outputRange: [1000, 0], // From off-screen to fully visible
                   }),
                 },
               ],
