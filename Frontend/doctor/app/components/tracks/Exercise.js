@@ -1,13 +1,15 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React, { useContext, useState } from "react";
 import { AntDesign, FontAwesome5 } from "@expo/vector-icons";
-import ExercisePopUp from "../popup/ExercisePopUp"; 
+import ExercisePopUp from "../popup/ExercisePopUp";
 import { ExerciseData } from "../../data/OptionsData";
 import { AppContext } from "../../context/AppContext";
 
 const Exercise = () => {
-  const [modalVisible, setModalVisible] = useState(false); 
-  const {exerData, setExerData} = useContext(AppContext);
+  const [modalVisible, setModalVisible] = useState(false);
+  const { exerData, setExerData } = useContext(AppContext);
+
+  console.log(exerData);
 
   const handleModalOpen = () => {
     setModalVisible(true);
@@ -24,6 +26,11 @@ const Exercise = () => {
         borderRadius: 20,
         padding: 20,
         flex: 1,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
       }}
     >
       <View
@@ -54,7 +61,7 @@ const Exercise = () => {
             fontWeight: "500",
           }}
         >
-          {exerData.calories} Calories
+          {exerData.calories || 0} cal
         </Text>
       </View>
       <View
@@ -72,7 +79,10 @@ const Exercise = () => {
             fontWeight: "500",
           }}
         >
-        {Math.floor(exerData.minutes / 60)}:{(exerData.minutes % 60).toString().padStart(2, '0')} hr
+          {Math.floor(exerData.minutes / 60)
+            .toString()
+            .padStart(2, "0") || 0}
+          :{(exerData.minutes % 60).toString().padStart(2, "0") || "00"} hr
         </Text>
       </View>
 

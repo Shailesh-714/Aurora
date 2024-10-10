@@ -1,12 +1,23 @@
 import React, { useState } from "react";
-import { Modal, View, Text, TouchableOpacity, StyleSheet, Animated, ActivityIndicator, ScrollView, Image } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  ActivityIndicator,
+  ScrollView,
+  Image,
+} from "react-native";
 import { WebView } from "react-native-webview";
-import * as Progress from 'react-native-progress';
+import * as Progress from "react-native-progress";
 import MasonryList from "@react-native-seoul/masonry-list";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
 import { data as initialData } from "../data/ExploreData";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
 // Utility function to shuffle array
 const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
@@ -46,11 +57,20 @@ const ExploreScreen = () => {
   };
 
   const Card = ({ item }) => {
-    const randomHeight = [200, 240, 260, 280, 300][Math.floor(Math.random() * 5)];
+    const randomHeight = [200, 240, 260, 280, 300][
+      Math.floor(Math.random() * 5)
+    ];
 
     return (
-      <TouchableOpacity onPress={() => openModal(item.link)} style={styles.cardContainer}>
-        <Image source={{ uri: item.image }} style={[styles.image, { height: randomHeight }]} resizeMode="cover" />
+      <TouchableOpacity
+        onPress={() => openModal(item.link)}
+        style={styles.cardContainer}
+      >
+        <Image
+          source={{ uri: item.image }}
+          style={[styles.image, { height: randomHeight }]}
+          resizeMode="cover"
+        />
         <View style={styles.textCard}>
           <Text numberOfLines={2} style={styles.textStyle}>
             {item.text}
@@ -61,67 +81,78 @@ const ExploreScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <MyHeader
-        onPressMenu={() => navigation.goBack()}
-        title="Explore"
-        right="more-vertical"
-        onRightPress={() => {}}
-      />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.scrollview}>
-        <MasonryList
-          data={shuffledData}
-          keyExtractor={(item, index) => index.toString()}
-          numColumns={2}
+    <LinearGradient
+      colors={["#FF7E67", "white"]}
+      start={{ x: 1, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
+      <SafeAreaView style={styles.container}>
+        <MyHeader title="Explore" titleColor="#FF7E67" />
+        <ScrollView
           showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <Card item={item} />}
-          refreshing={false}
-        />
-      </ScrollView>
-
-      {/* Modal with WebView */}
-      <Modal visible={modalVisible} transparent={true} animationType="none">
-        <Animated.View
-          style={[
-            styles.modalContainer,
-            {
-              transform: [
-                {
-                  translateY: slideAnim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [1000, 0], // From off-screen to fully visible
-                  }),
-                },
-              ],
-            },
-          ]}
+          style={styles.scrollview}
         >
-          <View style={styles.webviewHeader}>
-            <TouchableOpacity onPress={closeModal}>
-              <Text style={styles.closeButton}>Close</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Show the loading bar or activity indicator while loading */}
-          {loading && (
-            <View style={styles.loadingContainer}>
-              <Progress.Bar progress={progress} width={null} color="#007AFF" />
-            </View>
-          )}
-
-          <WebView
-            source={{ uri: selectedUrl }}
-            style={styles.webview}
-            onLoadStart={() => {
-              setLoading(true);
-              setProgress(0);
-            }}
-            onLoadProgress={({ nativeEvent }) => setProgress(nativeEvent.progress)}
-            onLoadEnd={() => setLoading(false)}
+          <MasonryList
+            data={shuffledData}
+            keyExtractor={(item, index) => index.toString()}
+            numColumns={2}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => <Card item={item} />}
+            refreshing={false}
           />
-        </Animated.View>
-      </Modal>
-    </SafeAreaView>
+        </ScrollView>
+
+        {/* Modal with WebView */}
+        <Modal visible={modalVisible} transparent={true} animationType="none">
+          <Animated.View
+            style={[
+              styles.modalContainer,
+              {
+                transform: [
+                  {
+                    translateY: slideAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [1000, 0], // From off-screen to fully visible
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            <View style={styles.webviewHeader}>
+              <TouchableOpacity onPress={closeModal}>
+                <Text style={styles.closeButton}>Close</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Show the loading bar or activity indicator while loading */}
+            {loading && (
+              <View style={styles.loadingContainer}>
+                <Progress.Bar
+                  progress={progress}
+                  width={null}
+                  color="#007AFF"
+                />
+              </View>
+            )}
+
+            <WebView
+              source={{ uri: selectedUrl }}
+              style={styles.webview}
+              onLoadStart={() => {
+                setLoading(true);
+                setProgress(0);
+              }}
+              onLoadProgress={({ nativeEvent }) =>
+                setProgress(nativeEvent.progress)
+              }
+              onLoadEnd={() => setLoading(false)}
+            />
+          </Animated.View>
+        </Modal>
+      </SafeAreaView>
+    </LinearGradient>
   );
 };
 
@@ -130,7 +161,6 @@ export default ExploreScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF1EB",
     gap: 5,
   },
   scrollview: {
@@ -141,7 +171,7 @@ const styles = StyleSheet.create({
     margin: 5,
     backgroundColor: "white",
     overflow: "hidden",
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
@@ -184,7 +214,7 @@ const styles = StyleSheet.create({
   closeButton: {
     color: "#007AFF",
     fontWeight: "bold",
-    fontSize:16
+    fontSize: 16,
   },
   webview: {
     flex: 1,

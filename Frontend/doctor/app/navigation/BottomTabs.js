@@ -30,20 +30,20 @@ const TabArr = [
   },
   {
     route: "Health",
-    label: "Health",
+    label: "Explore",
     type: Icons.MaterialCommunityIcons,
     icon: "food-apple-outline",
     component: ExploreScreen,
-    color: "#F27559",
+    color: "#FF7E67",
   },
 
   {
     route: "Community",
-    label: "Community",
+    label: "Chat",
     type: Icons.Ionicons,
     icon: "people-outline",
     component: ChatListScreen,
-    color: "#8773BB",
+    color: "#7C4D96",
   },
   {
     route: "Activity",
@@ -60,7 +60,7 @@ const TabArr = [
     type: Icons.FontAwesome,
     icon: "user-circle-o",
     component: ProfileScreen,
-    color: "#F6AD3E",
+    color: "#FFAE0E",
   },
 ];
 
@@ -129,7 +129,7 @@ const TabButton = (props) => {
             ref={circleRef}
             style={[
               styles.circle,
-              { backgroundColor: focused ? item.color : item.color }, 
+              { backgroundColor: focused ? item.color : item.color },
             ]}
           />
           <Animatable.View ref={iconRef}>
@@ -150,7 +150,7 @@ const TabButton = (props) => {
 
 export default function AnimTab1() {
   return (
-    <View style={{ flex: 1 ,minHeight: height}}>
+    <View style={{ flex: 1, minHeight: height }}>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,

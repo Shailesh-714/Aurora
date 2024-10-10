@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import * as Progress from "react-native-progress";
 import {
   AntDesign,
@@ -8,10 +8,13 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import TrackFoodPopup from "../popup/TrackFoodPopup";
-import {TrackFoodData} from '../../data/OptionsData'
+import { TrackFoodData } from "../../data/OptionsData";
+import { AppContext } from "../../context/AppContext";
 
 const TrackFood = () => {
   const [modalVisible, setModalVisible] = useState(false);
+  const { foodData, proteinNeed, fatNeed, carbNeed, calNeed, fiberNeed } =
+    useContext(AppContext);
   const handleModalOpen = () => {
     setModalVisible(true);
   };
@@ -19,6 +22,8 @@ const TrackFood = () => {
   const handleModalClose = () => {
     setModalVisible(false);
   };
+
+  useEffect(() => {}, []);
   return (
     <View
       style={{
@@ -26,6 +31,11 @@ const TrackFood = () => {
         borderRadius: 20,
         padding: 20,
         flex: 1,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+        elevation: 2,
       }}
     >
       <View
@@ -46,7 +56,7 @@ const TrackFood = () => {
             >
               <Progress.Circle
                 size={50}
-                progress={0.7}
+                progress={foodData.calories / calNeed || 0}
                 borderWidth={0}
                 thickness={3}
                 color="#F14C6E"
@@ -71,7 +81,7 @@ const TrackFood = () => {
           <View style={{ justifyContent: "space-evenly", marginLeft: "10%" }}>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>Track Food</Text>
             <Text style={{ fontSize: 12, color: "grey" }}>
-              0 of 1,800 Cal Eaten
+              {foodData.calories.toFixed(0) || 0} of {calNeed} Cal Eaten
             </Text>
           </View>
         </View>
@@ -115,7 +125,7 @@ const TrackFood = () => {
             >
               <Progress.Circle
                 size={40}
-                progress={0.6}
+                progress={foodData.protein / proteinNeed || 0}
                 borderWidth={0}
                 thickness={2}
                 color="#d9cd2c"
@@ -153,7 +163,7 @@ const TrackFood = () => {
             >
               <Progress.Circle
                 size={40}
-                progress={0.4}
+                progress={foodData.fat / fatNeed || 0}
                 borderWidth={0}
                 thickness={2}
                 color="#18a561"
@@ -187,7 +197,7 @@ const TrackFood = () => {
             >
               <Progress.Circle
                 size={40}
-                progress={0.7}
+                progress={foodData.carbs / carbNeed || 0}
                 borderWidth={0}
                 thickness={2}
                 color="#18a561"
@@ -225,7 +235,7 @@ const TrackFood = () => {
             >
               <Progress.Circle
                 size={40}
-                progress={0.3}
+                progress={foodData.fiber / fiberNeed || 0}
                 borderWidth={0}
                 thickness={2}
                 color="#d9cd2c"

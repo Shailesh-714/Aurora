@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import ChatScreen from "../screens/ChatScreen";
 import AnimTab1 from "./BottomTabs";
+import UserDetailsScreen from "../screens/UserDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -17,6 +18,11 @@ const StackNavigator = () => {
         <Stack.Screen
           name="ChatScreen"
           component={ChatScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="UserDetailsScreen"
+          component={UserDetailsScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

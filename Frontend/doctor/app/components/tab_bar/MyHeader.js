@@ -1,121 +1,66 @@
 import React from "react";
 import {
   View,
+  Text,
   StyleSheet,
+  Dimensions,
   TouchableOpacity,
-  useColorScheme,
 } from "react-native";
-import { Badge, Surface, Text, Title, useTheme } from "react-native-paper";
-import Feather from "react-native-vector-icons/Feather";
-import Colors from "./Colors";
+import { Feather } from "@expo/vector-icons"; // Import Feather icons
 
-const IconSize = 24;
+const { height, width } = Dimensions.get("window");
 
-const AppHeader = ({
-  style,
-  menu,
-  onPressMenu,
-  back,
-  onPressBack,
-  title,
-  right,
-  rightComponent,
-  onRightPress,
-  optionalBtn,
-  optionalBtnPress,
-  headerBg,
-  iconColor,
-  titleAlight,
-  optionalBadge,
+const MyHeader = ({
+  title = "Title",
+  titleColor = "#000",
+  onPressSettings,
 }) => {
-  const { colors, dark } = useTheme();
-  const color = dark ? Colors.white : Colors.dark;
-  const bgColor = dark ? Colors.dark : Colors.white;
-  const backgroundColor = headerBg || colors.background;
-  const LeftView = () => (
-    <View style={styles.view}>
-      {menu && (
-        <TouchableOpacity onPress={onPressMenu}>
-          <Feather name="menu" size={IconSize} color={color || iconColor} />
-        </TouchableOpacity>
-      )}
-      {back && (
-        <TouchableOpacity onPress={onPressBack}>
-          <Feather
-            name="arrow-left"
-            size={IconSize}
-            color={color || iconColor}
-          />
-        </TouchableOpacity>
-      )}
-    </View>
-  );
-  const RightView = () =>
-    rightComponent ? (
-      rightComponent
-    ) : (
-      <View style={[styles.view, styles.rightView]}>
-        {optionalBtn && (
-          <TouchableOpacity style={styles.rowView} onPress={optionalBtnPress}>
-            <Feather
-              name={optionalBtn}
-              size={IconSize}
-              color={color || iconColor}
-            />
-            {optionalBadge && (
-              <Badge style={{ position: "absolute", top: -5, right: -10 }}>
-                {optionalBadge}
-              </Badge>
-            )}
-          </TouchableOpacity>
-        )}
-        {right !== "" && (
-          <TouchableOpacity onPress={onRightPress}>
-            <Feather name={right} size={IconSize} color={color || iconColor} />
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  const TitleView = () => (
-    <View style={styles.titleView}>
-      <Title style={{ color: color || iconColor, textAlign: titleAlight }}>
-        {title}
-      </Title>
-    </View>
-  );
   return (
-    <Surface style={[styles.header, style, { backgroundColor }]}>
-      <LeftView />
-      <TitleView />
-      <RightView />
-    </Surface>
+    <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <Text style={[styles.title, { color: titleColor }]}>{title}</Text>
+      </View>
+
+      {/* Optional Settings Icon */}
+      {onPressSettings && (
+        <TouchableOpacity style={styles.settingsIcon} onPress={onPressSettings}>
+          <Feather name="settings" size={22} color="#0A3953" />
+        </TouchableOpacity>
+      )}
+    </View>
   );
 };
 
-export default AppHeader;
-
 const styles = StyleSheet.create({
-  header: {
-    height: 50,
-    elevation: 4,
-    justifyContent: "space-between",
+  container: {
+    width: width,
+    justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
+    zIndex: 1000,
+    marginTop: 10,
   },
-  view: {
-    marginHorizontal: 16,
-    alignItems: "center",
-    flexDirection: "row",
+  titleContainer: {
+    backgroundColor: "white",
+    paddingHorizontal: 15,
+    paddingVertical: 4,
+    borderRadius: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
   },
-  titleView: {
-    flex: 1,
+  title: {
+    fontSize: 20,
+    fontWeight: "600",
   },
-  rightView: {
-    justifyContent: "flex-end",
-  },
-  rowView: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 10,
+  settingsIcon: {
+    backgroundColor: "rgba(255,255,255,1)",
+    padding: 6,
+    borderRadius: 20,
+    position: "absolute",
+    right: 15, // Adjust based on design
   },
 });
+
+export default MyHeader;

@@ -20,18 +20,13 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim, setSlideAnim] = useState(new Animated.Value(height));
   const [detailsTab, setDetailsTab] = useState(false);
-  const [selectExercise, setSelectExercise] = useState(null);
+  const [selectFood, setSelectFood] = useState(null);
   const [query, setQuery] = useState("");
-  const [minutes, setMinutes] = useState("");
-  const { exerData, setExerData } = useContext(AppContext);
-
-  const handleSelectExer = (item) => {
+  const [quantity, setQuantity] = useState("");
+  const { foodData, setFoodData } = useContext(AppContext);
+  const handleSelectFood = (item) => {
     setDetailsTab(true);
-    setSelectExercise(item);
-  };
-
-  const totCalories = (minutes) => {
-    return selectExercise ? minutes * selectExercise.caloriesPerMinute : 0;
+    setSelectFood(item);
   };
 
   const filteredData = data.filter((item) =>
@@ -39,12 +34,26 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
   );
 
   const handleSave = () => {
-    setExerData({
-      calories: exerData.calories+totCalories(parseInt(minutes) || 0),
-      minutes: exerData.minutes+parseInt(minutes),
+    setFoodData({
+      calories:
+        (foodData.calories || 0) +
+        ((selectFood.calories / selectFood.quantity) * quantity || 0),
+      protein:
+        (foodData.protein || 0) +
+        ((selectFood.protein / selectFood.quantity) * quantity || 0),
+      fat:
+        (foodData.fat || 0) +
+        ((selectFood.fat / selectFood.quantity) * quantity || 0),
+      carbs:
+        (foodData.carbs || 0) +
+        ((selectFood.carbs / selectFood.quantity) * quantity || 0),
+      fiber:
+        (foodData.fiber || 0) +
+        ((selectFood.fiber / selectFood.quantity) * quantity || 0),
     });
-    setMinutes(0);
+    setQuantity(0);
     setDetailsTab(false);
+    console.log(JSON.stringify(foodData));
   };
 
   useEffect(() => {
@@ -86,11 +95,9 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
       onRequestClose={onClose}
     >
       <View style={styles.modalContainer}>
-        {/* Background Fade View */}
         <Animated.View
           style={[styles.modalBackground, { opacity: fadeAnim }]}
         />
-        {/* Sliding Modal Content */}
         <Animated.View
           style={[
             styles.modalContent,
@@ -115,7 +122,7 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    setDetailsTab(false), setMinutes(0);
+                    setDetailsTab(false), setQuantity(0);
                   }}
                 >
                   <Ionicons
@@ -124,6 +131,11 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
                     color="black"
                   />
                 </TouchableOpacity>
+                <Text
+                  style={{ fontSize: 16, fontWeight: "500", display: "flex" }}
+                >
+                  {selectFood.name}
+                </Text>
                 <TouchableOpacity onPress={handleSave}>
                   <MaterialIcons name="done" size={24} color="black" />
                 </TouchableOpacity>
@@ -136,15 +148,18 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
                   marginHorizontal: 10,
                 }}
               >
-                <Text style={{ fontSize: 16 }}>Minutes Performed</Text>
-                <TextInput
-                  placeholder="e.g. 30"
-                  placeholderTextColor={"grey"}
-                  style={{ fontSize: 16 }}
-                  keyboardType="numeric"
-                  value={minutes}
-                  onChangeText={(value) => setMinutes(value)}
-                />
+                <Text style={{ fontSize: 16 }}>Food Quantity</Text>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  <TextInput
+                    placeholder={"0"}
+                    placeholderTextColor={"grey"}
+                    style={{ fontSize: 16, width: 50, textAlign: "right" }}
+                    keyboardType="numeric"
+                    value={quantity}
+                    onChangeText={(value) => setQuantity(value)}
+                  />
+                  <Text style={{ fontSize: 16 }}>{selectFood.unit}</Text>
+                </View>
               </View>
               <View
                 style={{
@@ -154,10 +169,78 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
                   marginHorizontal: 10,
                 }}
               >
-                <Text style={{ fontSize: 16 }}>Calories Burned</Text>
-                <Text style={{ fontSize: 16 }}>
-                  {totCalories(parseInt(minutes) || 0)}
-                </Text>
+                <Text style={{ fontSize: 16 }}>Protein</Text>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  <Text style={{ fontSize: 16 }}>
+                    {(selectFood.protein / selectFood.quantity) * quantity || 0}
+                  </Text>
+                  <Text style={{ fontSize: 16 }}>g</Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+
+                  marginHorizontal: 10,
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>Fat</Text>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  <Text style={{ fontSize: 16 }}>
+                    {(selectFood.fat / selectFood.quantity) * quantity || 0}
+                  </Text>
+                  <Text style={{ fontSize: 16 }}>g</Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+
+                  marginHorizontal: 10,
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>Carbs</Text>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  <Text style={{ fontSize: 16 }}>
+                    {(selectFood.carbs / selectFood.quantity) * quantity || 0}
+                  </Text>
+                  <Text style={{ fontSize: 16 }}>g</Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+
+                  marginHorizontal: 10,
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>Fiber</Text>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  <Text style={{ fontSize: 16 }}>
+                    {(selectFood.fiber / selectFood.quantity) * quantity || 0}
+                  </Text>
+                  <Text style={{ fontSize: 16 }}>g</Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+
+                  marginHorizontal: 10,
+                }}
+              >
+                <Text style={{ fontSize: 16 }}>Calories</Text>
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                  <Text style={{ fontSize: 16 }}>
+                    {(selectFood.calories / selectFood.quantity) * quantity ||
+                      0}
+                  </Text>
+                  <Text style={{ fontSize: 16 }}>cal</Text>
+                </View>
               </View>
             </View>
           ) : (
@@ -195,7 +278,7 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
                   snapToEnd
                   keyExtractor={(item) => item.id}
                   renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleSelectExer(item)}>
+                    <TouchableOpacity onPress={() => handleSelectFood(item)}>
                       <Text style={styles.item}>{item.name}</Text>
                     </TouchableOpacity>
                   )}
@@ -244,7 +327,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 30,
     paddingVertical: 5,
-    paddingHorizontal:15
+    paddingHorizontal: 15,
   },
   item: {
     margin: 15,
