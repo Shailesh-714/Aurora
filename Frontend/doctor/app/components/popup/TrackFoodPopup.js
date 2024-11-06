@@ -53,7 +53,6 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
     });
     setQuantity(0);
     setDetailsTab(false);
-    console.log(JSON.stringify(foodData));
   };
 
   useEffect(() => {

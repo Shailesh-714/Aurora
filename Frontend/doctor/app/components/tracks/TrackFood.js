@@ -58,7 +58,7 @@ const TrackFood = () => {
                 size={50}
                 progress={foodData.calories / calNeed || 0}
                 borderWidth={0}
-                thickness={3}
+                thickness={4}
                 color="#F14C6E"
                 strokeCap="round"
                 showsText={false}
@@ -127,7 +127,7 @@ const TrackFood = () => {
                 size={40}
                 progress={foodData.protein / proteinNeed || 0}
                 borderWidth={0}
-                thickness={2}
+                thickness={3}
                 color="#d9cd2c"
                 strokeCap="round"
                 showsText={false}
@@ -165,7 +165,7 @@ const TrackFood = () => {
                 size={40}
                 progress={foodData.fat / fatNeed || 0}
                 borderWidth={0}
-                thickness={2}
+                thickness={3}
                 color="#18a561"
                 strokeCap="round"
                 showsText={false}
@@ -199,7 +199,7 @@ const TrackFood = () => {
                 size={40}
                 progress={foodData.carbs / carbNeed || 0}
                 borderWidth={0}
-                thickness={2}
+                thickness={3}
                 color="#18a561"
                 strokeCap="round"
                 showsText={false}
@@ -237,7 +237,7 @@ const TrackFood = () => {
                 size={40}
                 progress={foodData.fiber / fiberNeed || 0}
                 borderWidth={0}
-                thickness={2}
+                thickness={3}
                 color="#d9cd2c"
                 strokeCap="round"
                 showsText={false}

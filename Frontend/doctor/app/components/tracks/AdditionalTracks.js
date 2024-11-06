@@ -35,17 +35,14 @@ const InputModal = ({ visible, onClose, name, unit, value, setValue }) => {
           <View
             style={{
               width: "100%",
-              justifyContent: "center",
               flexDirection: "row",
+              gap: 15,
             }}
           >
-            <Text style={styles.modalTitle}>{name}</Text>
-            <TouchableOpacity
-              onPress={onClose}
-              style={{ position: "absolute", left: 0, alignSelf: "center" }}
-            >
+            <TouchableOpacity onPress={onClose} style={{ alignSelf: "center" }}>
               <Ionicons name="arrow-back" size={18} color="black" />
             </TouchableOpacity>
+            <Text style={styles.modalTitle}>{name}</Text>
           </View>
           <View
             style={{
@@ -73,7 +70,11 @@ const InputModal = ({ visible, onClose, name, unit, value, setValue }) => {
 
           <TouchableOpacity
             onPress={handleSave}
-            style={{ backgroundColor: "#ff7676", borderRadius: 10 }}
+            style={{
+              backgroundColor: "#ff7676",
+              borderRadius: 10,
+              alignSelf: "flex-end",
+            }}
           >
             <Text
               style={{
@@ -96,8 +97,15 @@ const InputModal = ({ visible, onClose, name, unit, value, setValue }) => {
 const AdditionalTracks = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);
-  const { water, setWater, sleep, setSleep, meditation, setMeditation } =
-    useContext(AppContext);
+  const {
+    water,
+    setWater,
+    sleep,
+    setSleep,
+    meditation,
+    setMeditation,
+    waterNeed,
+  } = useContext(AppContext);
 
   const handleOpenModal = (track) => {
     setSelectedTrack(track);
@@ -127,12 +135,14 @@ const AdditionalTracks = () => {
           alignItems: "center",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <FontAwesome6 name="glass-water" size={18} color="#228bc7" />
-          <View style={{ marginLeft: "15%" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+          <View style={{ width: 20 }}>
+            <FontAwesome6 name="glass-water" size={18} color="#228bc7" />
+          </View>
+          <View>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>Water</Text>
             <Text style={{ fontSize: 12, color: "grey" }}>
-              {water} of 6 Glasses
+              {water} of {waterNeed} Glasses
             </Text>
           </View>
         </View>
@@ -159,9 +169,11 @@ const AdditionalTracks = () => {
           alignItems: "center",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Ionicons name="cloudy-night-sharp" size={18} color="#8856b5" />
-          <View style={{ marginLeft: "10%" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+          <View style={{ width: 20 }}>
+            <Ionicons name="cloudy-night-sharp" size={18} color="#8856b5" />
+          </View>
+          <View>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>Sleep</Text>
             <Text style={{ fontSize: 12, color: "grey" }}>{sleep} of 8 hr</Text>
           </View>
@@ -189,9 +201,15 @@ const AdditionalTracks = () => {
           alignItems: "center",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <MaterialCommunityIcons name="meditation" size={18} color="#32CD32" />
-          <View style={{ marginLeft: "10%" }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
+          <View style={{ width: 20 }}>
+            <MaterialCommunityIcons
+              name="meditation"
+              size={18}
+              color="#32CD32"
+            />
+          </View>
+          <View>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>Meditation</Text>
             <Text style={{ fontSize: 12, color: "grey" }}>
               {meditation} min
@@ -246,7 +264,6 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#ff7676",
   },
   input: {
     borderBottomWidth: 2,

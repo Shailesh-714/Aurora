@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
+  ImageBackground,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import * as Progress from "react-native-progress";
@@ -17,7 +18,7 @@ import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
 import { data as initialData } from "../data/ExploreData";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
+import ExploreBg from "../assets/images/backgrounds/appScreenBg/explore.jpg";
 
 // Utility function to shuffle array
 const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
@@ -81,14 +82,9 @@ const ExploreScreen = () => {
   };
 
   return (
-    <LinearGradient
-      colors={["#FF7E67", "white"]}
-      start={{ x: 1, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.container}
-    >
+    <ImageBackground style={{ flex: 1 }} source={ExploreBg}>
       <SafeAreaView style={styles.container}>
-        <MyHeader title="Explore" titleColor="#FF7E67" />
+        <MyHeader title="Explore" titleColor="#FB706B" />
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={styles.scrollview}
@@ -100,6 +96,14 @@ const ExploreScreen = () => {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => <Card item={item} />}
             refreshing={false}
+          />
+          <View
+            style={{
+              backgroundColor: "transparent",
+              borderRadius: 20,
+              padding: 30,
+              marginBottom: 20,
+            }}
           />
         </ScrollView>
 
@@ -152,7 +156,7 @@ const ExploreScreen = () => {
           </Animated.View>
         </Modal>
       </SafeAreaView>
-    </LinearGradient>
+    </ImageBackground>
   );
 };
 
@@ -167,6 +171,8 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   cardContainer: {
+    borderWidth: 2,
+    borderColor: "white",
     borderRadius: 10,
     margin: 5,
     backgroundColor: "white",

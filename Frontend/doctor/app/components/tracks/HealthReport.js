@@ -1,9 +1,25 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ProgressBar from "../ProgressBar";
 import * as Progress from "react-native-progress";
+import { AppContext } from "../../context/AppContext";
 
 const HealthReport = () => {
+  const { foodHealth, exerciseHealth, skinHealth, mentalHealth, healthScore } =
+    useContext(AppContext);
+  const [healthRate, setHealthRate] = useState({
+    color: "#ff7676",
+    level: "low",
+  });
+  useEffect(() => {
+    if (healthScore < 0.3) {
+      setHealthRate({ color: "#ff7676", level: "Low" });
+    } else if (healthScore >= 0.3 && healthScore < 0.7) {
+      setHealthRate({ color: "#fccc44", level: "Average" });
+    } else {
+      setHealthRate({ color: "#69c866", level: "Good" });
+    }
+  }, [healthScore]);
   return (
     <View
       style={{
@@ -17,7 +33,7 @@ const HealthReport = () => {
         elevation: 2,
       }}
     >
-      <Text style={{ fontSize: 16, fontWeight: "bold" }}>Dashboard</Text>
+      <Text style={{ fontSize: 16, fontWeight: "bold" }}>Health Stat</Text>
       <View
         style={{
           display: "flex",
@@ -38,52 +54,60 @@ const HealthReport = () => {
               style={{
                 fontSize: 10,
                 padding: "1%",
-                fontWeight: 500,
-                color: "#888",
+                fontWeight: "bold",
               }}
             >
               Food
             </Text>
-            <ProgressBar color={"#5BB2D0"} progress={0.6} />
+            <ProgressBar
+              color={"#7C4D96"}
+              progress={parseFloat(foodHealth || 0)}
+            />
           </View>
           <View style={{ width: "100%" }}>
             <Text
               style={{
                 fontSize: 10,
                 padding: "1%",
-                fontWeight: 500,
-                color: "#888",
+                fontWeight: "bold",
               }}
             >
               Mental
             </Text>
-            <ProgressBar color={"#5BB2D0"} progress={0.8} />
+            <ProgressBar
+              color={"#87ceeb"}
+              progress={parseFloat(mentalHealth || 0)}
+            />
           </View>
           <View style={{ width: "100%" }}>
             <Text
               style={{
                 fontSize: 10,
                 padding: "1%",
-                fontWeight: 500,
-                color: "#888",
+                fontWeight: "bold",
               }}
             >
               Skin
             </Text>
-            <ProgressBar color={"#5BB2D0"} progress={0.4} />
+            <ProgressBar
+              color={"#FFAE0E"}
+              progress={parseFloat(skinHealth || 0)}
+            />
           </View>
           <View style={{ width: "100%" }}>
             <Text
               style={{
                 fontSize: 10,
                 padding: "1%",
-                fontWeight: 500,
-                color: "#888",
+                fontWeight: "bold",
               }}
             >
               Exercise
             </Text>
-            <ProgressBar color={"#5BB2D0"} progress={0.9} />
+            <ProgressBar
+              color={"#F14C6E"}
+              progress={parseFloat(exerciseHealth || 0)}
+            />
           </View>
         </View>
         <View
@@ -96,41 +120,42 @@ const HealthReport = () => {
         >
           <Progress.Circle
             size={100}
-            progress={0.7}
+            progress={parseFloat(healthScore || 0)}
             borderWidth={0}
-            thickness={7}
-            color="#F14C6E"
+            thickness={6}
+            color={healthRate.color}
             strokeCap="round"
             showsText={false}
+            unfilledColor="#f2f2f2"
           />
-
-          {}
           <View
             style={{
               position: "absolute",
               alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            {}
             <Text
               style={{
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: "bold",
-                color: "#F14C6E",
+                color: healthRate.color,
               }}
             >
-              {`${0.7 * 100}%`}
+              {`${
+                healthScore <= 100 && healthScore >= 0
+                  ? parseInt(healthScore * 100)
+                  : 0
+              }%`}
             </Text>
-
-            {}
             <Text
               style={{
                 fontSize: 12,
-                color: "#888",
+                fontWeight: "bold",
                 marginTop: 2,
               }}
             >
-              Health
+              {healthRate.level}
             </Text>
           </View>
         </View>

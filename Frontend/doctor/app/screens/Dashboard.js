@@ -15,20 +15,35 @@ import HealthReport from "../components/tracks/HealthReport";
 import TrackFood from "../components/tracks/TrackFood";
 import AdditionalTracks from "../components/tracks/AdditionalTracks";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import HomeBg from "../assets/images/backgrounds/appScreenBg/home.jpg";
-const { height } = Dimensions.get("window");
+import ActivitySelector from "../components/tracks/ActivitySelector";
+import StatisticReport from "../components/tracks/StatisticReport";
+const { height, width } = Dimensions.get("window");
 const Dashboard = () => {
   const navigation = useNavigation();
   return (
     <ImageBackground style={{ flex: 1 }} source={HomeBg}>
       <SafeAreaView style={styles.container}>
-        <MyHeader title="Home" titleColor="#5BB2D0" />
+        <MyHeader title="Home" titleColor="#101D4A" />
 
         <ScrollView>
-          <View style={{ marginHorizontal: 20, marginVertical: 15 }}>
+          <View
+            style={{
+              marginHorizontal: width * 0.04,
+              marginVertical: 15,
+              gap: 20,
+            }}
+          >
+            <ActivitySelector />
             <HealthReport />
-            <View style={{ flexDirection: "row", gap: 20, marginVertical: 20 }}>
+            <StatisticReport />
+
+            <View
+              style={{
+                flexDirection: "row",
+                gap: width * 0.05,
+              }}
+            >
               <Steps />
               <Exercise />
             </View>
@@ -36,11 +51,11 @@ const Dashboard = () => {
             <AdditionalTracks />
             <View
               style={{
-                backgroundColor: "white",
+                backgroundColor: "transparent",
                 borderRadius: 20,
                 padding: 30,
               }}
-            ></View>
+            />
           </View>
         </ScrollView>
       </SafeAreaView>

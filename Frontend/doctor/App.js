@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, StatusBar, StyleSheet, View } from "react-native";
 import StackNavigator from "./app/navigation/StackNavigator";
 import LoginScreen from "./app/screens/LoginScreen";
 import * as SplashScreen from "expo-splash-screen";
@@ -7,6 +7,25 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 import { AppProvider } from "./app/context/AppContext";
+import { ToastBarProvider } from "./app/context/ToastBarContext";
+import { CaloryProvider } from "./app/context/CaloryContext";
+import * as Notifications from "expo-notifications";
+import { UserProvider } from "./app/context/UserContext";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
+const requestPermissions = async () => {
+  const { status } = await Notifications.requestPermissionsAsync();
+  if (status !== "granted") {
+    alert("Permission for notifications is required to receive reminders.");
+  }
+};
 const { width, height } = Dimensions.get("window");
 SplashScreen.preventAutoHideAsync();
 
@@ -21,6 +40,9 @@ export default function App() {
     });
     return () => unsubscribeAuth();
   }, []);
+  useEffect(() => {
+    requestPermissions();
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -34,17 +56,28 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppProvider>
-        <View
-          onLayout={onLayoutRootView}
-          style={{
-            flex: 1,
-            minHeight: height,
-          }}
-        >
-          {user ? <StackNavigator /> : <LoginScreen />}
-        </View>
-      </AppProvider>
+      <UserProvider>
+        <AppProvider>
+          <ToastBarProvider>
+            <CaloryProvider>
+              <View
+                onLayout={onLayoutRootView}
+                style={{
+                  flex: 1,
+                  minHeight: height,
+                }}
+              >
+                <StatusBar
+                  barStyle="light-content"
+                  translucent={true}
+                  backgroundColor="transparent"
+                />
+                {user ? <StackNavigator /> : <LoginScreen />}
+              </View>
+            </CaloryProvider>
+          </ToastBarProvider>
+        </AppProvider>
+      </UserProvider>
     </SafeAreaProvider>
   );
 }

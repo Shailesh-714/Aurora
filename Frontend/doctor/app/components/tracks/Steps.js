@@ -1,103 +1,125 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Platform,
+  PermissionsAndroid,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import ProgressBar from "../ProgressBar"; // Import your custom progress bar
-import { Pedometer } from "expo-sensors"; // Import Pedometer for step tracking
+import ProgressBar from "../ProgressBar";
+import { Pedometer } from "expo-sensors";
 
 const Steps = () => {
   const [steps, setSteps] = useState(0);
-  const goal = 10000; // Set your step goal
+  const goal = 10000;
 
-  // Function to calculate progress based on steps taken
   const getProgress = (steps) => {
-    return Math.min(steps / goal, 1); // Ensures the progress doesn't exceed 1 (100%)
+    return Math.min(steps / goal, 1);
   };
 
-  // Reset steps at midnight (12 AM)
   const resetStepsAtMidnight = () => {
     const now = new Date();
     const nextMidnight = new Date(now);
-    nextMidnight.setHours(24, 0, 0, 0); // Set to the next midnight
+    nextMidnight.setHours(24, 0, 0, 0);
 
     const timeUntilMidnight = nextMidnight.getTime() - now.getTime();
     setTimeout(() => {
-      setSteps(0); // Reset steps at midnight
-      resetStepsAtMidnight(); // Recursively reset every day at midnight
+      setSteps(0);
+      resetStepsAtMidnight();
     }, timeUntilMidnight);
+  };
+
+  const requestPermissions = async () => {
+    if (Platform.OS === "android" && Platform.Version >= 29) {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACTIVITY_RECOGNITION
+      );
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
+    }
+    return true;
   };
 
   useEffect(() => {
     const startPedometer = async () => {
-      try {
-        const available = await Pedometer.isAvailableAsync(); // Check for availability
-        if (available) {
-          const subscription = Pedometer.watchStepCount((result) => {
-            setSteps(result.steps); // Update the step count dynamically
-          });
-          return () => subscription && subscription.remove(); // Clean up the subscription
-        } else {
-          console.log("Pedometer is not available on this device.");
+      const hasPermission = await requestPermissions();
+      if (hasPermission) {
+        try {
+          const available = await Pedometer.isAvailableAsync();
+          if (available) {
+            const subscription = Pedometer.watchStepCount((result) => {
+              setSteps(result.steps);
+            });
+            return () => subscription && subscription.remove();
+          } else {
+            console.log("Pedometer is not available on this device.");
+          }
+        } catch (error) {
+          console.error("Error starting pedometer:", error);
         }
-      } catch (error) {
-        console.error("Error starting pedometer:", error);
+      } else {
+        console.log("Activity recognition permission not granted.");
       }
     };
 
     startPedometer();
-    resetStepsAtMidnight(); // Start resetting steps at midnight
+    resetStepsAtMidnight();
   }, []);
 
   return (
-    <View
-      style={{
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 20,
-        flex: 1,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.41,
-        elevation: 2,
-      }}
-    >
+    <View style={styles.container}>
       <View>
         <View style={{ marginBottom: 5 }}>
-          <Text style={{ fontSize: 16, fontWeight: "bold" }}>Steps</Text>
+          <Text style={styles.title}>Steps</Text>
         </View>
-        <View
-          style={{
-            marginBottom: 5,
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.stepRow}>
           <MaterialCommunityIcons
             name="shoe-sneaker"
             size={30}
             color="#F27559"
           />
-          <Text
-            style={{
-              marginHorizontal: 10,
-              fontSize: 17,
-              fontWeight: "500",
-            }}
-          >
-            {steps} {/* Display the steps dynamically */}
-          </Text>
+          <Text style={styles.stepCount}>{steps}</Text>
         </View>
         <View style={{ marginBottom: 10 }}>
-          <Text style={{ fontSize: 11 }}>Goal: {goal.toLocaleString()}</Text>
+          <Text style={styles.goalText}>Goal: {goal.toLocaleString()}</Text>
         </View>
-
         <View style={{ alignItems: "flex-start" }}>
-          {/* Use your ProgressBar component */}
           <ProgressBar color={"#F27559"} progress={getProgress(steps)} />
         </View>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    flex: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  stepRow: {
+    marginBottom: 5,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  stepCount: {
+    marginHorizontal: 10,
+    fontSize: 17,
+    fontWeight: "500",
+  },
+  goalText: {
+    fontSize: 11,
+  },
+});
 
 export default Steps;

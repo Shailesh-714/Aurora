@@ -1,3 +1,52 @@
+export const AuthOptions = [
+  { label: "Login" },
+  { label: "Register" },
+  { label: "Google" },
+  { label: "Facebook" },
+  { label: "Twitter X" },
+];
+
+export const loginOptionList = [
+  { id: 0 },
+  {
+    id: 1,
+    name: "Login",
+    icon: require("../assets/images/icons/login.png"),
+    bg: require("../assets/images/backgrounds/loginbg/bg2.png"),
+    tips: "Get Regular Checkups: Early detection of health issues can lead to more effective treatment.",
+  },
+  {
+    id: 2,
+    name: "Register",
+    icon: require("../assets/images/icons/register.png"),
+    bg: require("../assets/images/backgrounds/loginbg/bg1.png"),
+    tips: "Stay Hydrated: Drinking enough water supports digestion, circulation, and temperature regulation.",
+  },
+
+  {
+    id: 3,
+    name: "Google",
+    icon: require("../assets/images/icons/google.png"),
+    bg: require("../assets/images/backgrounds/loginbg/bg3.png"),
+    tips: "Eat the Rainbow: A variety of colorful fruits and vegetables provides essential vitamins and antioxidants.",
+  },
+  {
+    id: 4,
+    name: "Facebook",
+    icon: require("../assets/images/icons/facebook.png"),
+    bg: require("../assets/images/backgrounds/loginbg/bg4.png"),
+    tips: "Wash Your Hands: Proper hand hygiene can prevent the spread of infections and illness.",
+  },
+  {
+    id: 5,
+    name: "Twitter X",
+    icon: require("../assets/images/icons/twitter-x.png"),
+    bg: require("../assets/images/backgrounds/loginbg/bg5.png"),
+    tips: "Prioritize Sleep: Quality sleep is vital for immune function, mental clarity, and overall health.",
+  },
+  { id: 6 },
+];
+
 export const ExerciseData = [
   { id: "1", name: "Running", caloriesPerMinute: 10 },
   { id: "2", name: "Cycling", caloriesPerMinute: 8 },

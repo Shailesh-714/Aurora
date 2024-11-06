@@ -9,8 +9,6 @@ const Exercise = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const { exerData, setExerData } = useContext(AppContext);
 
-  console.log(exerData);
-
   const handleModalOpen = () => {
     setModalVisible(true);
   };

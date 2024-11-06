@@ -1,20 +1,13 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { auth } from "../../firebaseConfig"; // Firebase config
+import { auth } from "../../firebaseConfig";
+import { UserContext } from "./UserContext";
 
 const AppContext = createContext();
 
 const AppProvider = ({ children }) => {
+  const { userInfo } = useContext(UserContext);
   const [exerData, setExerData] = useState({ calories: 0, minutes: 0 });
-
-  const [userInfo, setUserInfo] = useState({
-    age: 0,
-    weight: 0,
-    height: 0,
-    bmi: 0,
-    gender: "",
-  });
-
   const [foodData, setFoodData] = useState({
     calories: 0,
     protein: 0,
@@ -22,28 +15,21 @@ const AppProvider = ({ children }) => {
     carbs: 0,
     fiber: 0,
   });
-
-  const [username, setUsername] = useState("");
-  const [profileImage, setProfileImage] = useState("");
-
   const [proteinNeed, setProteinNeed] = useState(0);
   const [fatNeed, setFatNeed] = useState(0);
   const [carbNeed, setCarbNeed] = useState(0);
   const [calNeed, setCalNeed] = useState(0);
   const [fiberNeed, setFiberNeed] = useState(0);
-
-  // Add state variables for water, sleep, and meditation
-  const [water, setWater] = useState(0); // Glasses of water consumed
-  const [sleep, setSleep] = useState(0); // Hours of sleep
-  const [meditation, setMeditation] = useState(0); // Minutes of meditation
-
-  const calculateBMI = (weight, height) => {
-    if (height > 0) {
-      const heightInMeters = height / 100;
-      return (weight / (heightInMeters * heightInMeters)).toFixed(1);
-    }
-    return 0;
-  };
+  const [activityFactor, setActivityFactor] = useState(1.55);
+  const [water, setWater] = useState(0);
+  const [waterNeed, setWaterNeed] = useState(0);
+  const [sleep, setSleep] = useState(0);
+  const [meditation, setMeditation] = useState(0);
+  const [foodHealth, setFoodHealth] = useState(0);
+  const [exerciseHealth, setExerciseHealth] = useState(0);
+  const [skinHealth, setSkinHealth] = useState(0);
+  const [mentalHealth, setMentalHealth] = useState(0);
+  const [healthScore, setHealthScore] = useState(0);
 
   const calculateBMR = (weight, height, age, gender) => {
     if (gender.toLowerCase() === "male") {
@@ -55,10 +41,8 @@ const AppProvider = ({ children }) => {
 
   const calculateDailyNeeds = () => {
     const { weight, height, age, gender } = userInfo;
-
     if (weight > 0 && height > 0 && age > 0 && gender) {
       const bmr = calculateBMR(weight, height, age, gender);
-      const activityFactor = 1.375;
       const tdee = (bmr * activityFactor).toFixed(0);
 
       setCalNeed(tdee);
@@ -66,16 +50,25 @@ const AppProvider = ({ children }) => {
       setFatNeed((tdee * 0.3) / 9);
       setCarbNeed((tdee - tdee * 0.2 - tdee * 0.3) / 4);
       setFiberNeed(30);
+
+      const dailyWaterInMl = bmr;
+      const glassesOfWater = Math.ceil(dailyWaterInMl / 250);
+      setWaterNeed(glassesOfWater);
     }
   };
 
   useEffect(() => {
     const loadStoredData = async () => {
+      const currentUserId = !!auth.currentUser ? auth.currentUser.uid : "";
       try {
-        const exerData = await AsyncStorage.getItem("exerData");
+        const activityFactorData = await AsyncStorage.getItem(
+          `${currentUserId}activityFactor`
+        );
+        setActivityFactor(parseFloat(activityFactorData) || 1.55);
+        const exerData = await AsyncStorage.getItem(`${currentUserId}exerData`);
         setExerData(JSON.parse(exerData) || { calories: 0, minutes: 0 });
 
-        const foodData = await AsyncStorage.getItem("foodData");
+        const foodData = await AsyncStorage.getItem(`${currentUserId}foodData`);
         setFoodData(
           JSON.parse(foodData) || {
             calories: 0,
@@ -86,44 +79,40 @@ const AppProvider = ({ children }) => {
           }
         );
 
-        const userInfo = await AsyncStorage.getItem("userInfo");
-        const parsedUserInfo = JSON.parse(userInfo || "{}");
-
-        if (parsedUserInfo) {
-          parsedUserInfo.bmi = calculateBMI(
-            parsedUserInfo.weight,
-            parsedUserInfo.height
-          );
-          setUserInfo(parsedUserInfo);
-        }
-
-        const storedProfileImage = await AsyncStorage.getItem("profileImage");
-        if (storedProfileImage) {
-          setProfileImage(storedProfileImage);
-        }
-
-        const storedUsername = await AsyncStorage.getItem("username");
-        if (storedUsername) {
-          setUsername(storedUsername);
-        } else {
-          const currentUser = auth.currentUser;
-          if (currentUser && currentUser.email) {
-            const name = currentUser.email.split("@")[0];
-            const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
-            setUsername(formattedName);
-            await AsyncStorage.setItem("username", formattedName);
-          }
-        }
-
-        // Load water, sleep, and meditation from storage if they exist
-        const storedWater = await AsyncStorage.getItem("water");
+        const storedWater = await AsyncStorage.getItem(`${currentUserId}water`);
         setWater(parseInt(storedWater) || 0);
 
-        const storedSleep = await AsyncStorage.getItem("sleep");
+        const storedSleep = await AsyncStorage.getItem(`${currentUserId}sleep`);
         setSleep(parseFloat(storedSleep) || 0);
 
-        const storedMeditation = await AsyncStorage.getItem("meditation");
+        const storedMeditation = await AsyncStorage.getItem(
+          `${currentUserId}meditation`
+        );
         setMeditation(parseInt(storedMeditation) || 0);
+
+        const storedFoodHealth = await AsyncStorage.getItem(
+          `${currentUserId}foodHealth`
+        );
+        setFoodHealth(parseFloat(storedFoodHealth).toFixed(1) || 0);
+
+        const storedExerciseHealth = await AsyncStorage.getItem(
+          `${currentUserId}exerciseHealth`
+        );
+        setExerciseHealth(parseFloat(storedExerciseHealth).toFixed(1) || 0);
+
+        const storedSkinHealth = await AsyncStorage.getItem(
+          `${currentUserId}skinHealth`
+        );
+        setSkinHealth(parseFloat(storedSkinHealth).toFixed(1) || 0);
+
+        const storedMentalHealth = await AsyncStorage.getItem(
+          `${currentUserId}mentalHealth`
+        );
+        setMentalHealth(parseFloat(storedMentalHealth).toFixed(1) || 0);
+        const storedHealthScore = await AsyncStorage.getItem(
+          `${currentUserId}healthScore`
+        );
+        setHealthScore(parseFloat(storedHealthScore).toFixed(1) || 0);
       } catch (error) {
         console.error("Error retrieving data from AsyncStorage:", error);
       }
@@ -141,26 +130,133 @@ const AppProvider = ({ children }) => {
     ) {
       calculateDailyNeeds();
     }
-  }, [userInfo]);
+  }, [userInfo, activityFactor]);
+
+  const calculateFoodHealth = () => {
+    const calorieScore = foodData.calories / calNeed;
+    const proteinScore = foodData.protein / proteinNeed;
+    const fatScore = foodData.fat / fatNeed;
+    const carbScore = foodData.carbs / carbNeed;
+    const fiberScore = foodData.fiber / fiberNeed;
+    setFoodHealth(
+      parseFloat(
+        (
+          (calorieScore + proteinScore + fatScore + carbScore + fiberScore) /
+          5
+        ).toFixed(2)
+      ) || 0
+    );
+  };
+
+  const calculateExerciseHealth = () => {
+    const { weight, height, age, gender } = userInfo;
+    const bmr = calculateBMR(weight, height, age, gender);
+    const dailyCalorieGoal = bmr * activityFactor;
+    const calorieScore = exerData.calories / Math.round(dailyCalorieGoal);
+    setExerciseHealth(parseFloat(calorieScore.toFixed(2)) || 0);
+  };
+
+  const calculateSkinHealth = () => {
+    const waterScore = water / waterNeed;
+    setSkinHealth(parseFloat(waterScore.toFixed(2)) || 0);
+  };
+
+  const calculateMentalHealth = () => {
+    const sleepScore = sleep / 8;
+    const meditationScore = Math.min(meditation / 20, 1);
+    setMentalHealth(
+      parseFloat(((sleepScore + meditationScore) / 2).toFixed(2)) || 0
+    );
+  };
+
+  useEffect(() => {
+    calculateFoodHealth();
+    calculateExerciseHealth();
+    calculateSkinHealth();
+    calculateMentalHealth();
+  }, [
+    foodData,
+    exerData,
+    water,
+    sleep,
+    meditation,
+    calNeed,
+    proteinNeed,
+    fatNeed,
+    carbNeed,
+  ]);
+
+  useEffect(() => {
+    setHealthScore(
+      parseFloat(
+        ((foodHealth + exerciseHealth + skinHealth + mentalHealth) / 4).toFixed(
+          2
+        )
+      )
+    );
+  }, [foodHealth, exerciseHealth, skinHealth, mentalHealth]);
 
   useEffect(() => {
     const storeData = async () => {
+      const currentUserId = !!auth.currentUser ? auth.currentUser.uid : "";
       try {
-        await AsyncStorage.setItem("exerData", JSON.stringify(exerData));
-        await AsyncStorage.setItem("foodData", JSON.stringify(foodData));
-        await AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
-        await AsyncStorage.setItem("profileImage", profileImage);
+        await AsyncStorage.setItem(
+          `${currentUserId}activityFactor`,
+          activityFactor.toString()
+        );
+        await AsyncStorage.setItem(
+          `${currentUserId}exerData`,
+          JSON.stringify(exerData)
+        );
+        await AsyncStorage.setItem(
+          `${currentUserId}foodData`,
+          JSON.stringify(foodData)
+        );
 
-        // Store water, sleep, and meditation in AsyncStorage
-        await AsyncStorage.setItem("water", water.toString());
-        await AsyncStorage.setItem("sleep", sleep.toString());
-        await AsyncStorage.setItem("meditation", meditation.toString());
+        await AsyncStorage.setItem(`${currentUserId}water`, water.toString());
+        await AsyncStorage.setItem(`${currentUserId}sleep`, sleep.toString());
+        await AsyncStorage.setItem(
+          `${currentUserId}meditation`,
+          meditation.toString()
+        );
+        await AsyncStorage.setItem(
+          `${currentUserId}foodHealth`,
+          foodHealth.toString()
+        );
+        await AsyncStorage.setItem(
+          `${currentUserId}exerciseHealth`,
+          exerciseHealth.toString()
+        );
+        await AsyncStorage.setItem(
+          `${currentUserId}skinHealth`,
+          skinHealth.toString()
+        );
+        await AsyncStorage.setItem(
+          `${currentUserId}mentalHealth`,
+          mentalHealth.toString()
+        );
+        await AsyncStorage.setItem(
+          `${currentUserId}healthScore`,
+          healthScore.toString()
+        );
       } catch (error) {
         console.error("Error saving data to AsyncStorage:", error);
       }
     };
     storeData();
-  }, [exerData, foodData, userInfo, profileImage, water, sleep, meditation]);
+  }, [
+    activityFactor,
+    exerData,
+    foodData,
+    water,
+    sleep,
+    meditation,
+    foodHealth,
+    exerciseHealth,
+    skinHealth,
+    mentalHealth,
+    healthScore,
+  ]);
 
   return (
     <AppContext.Provider
@@ -169,12 +265,6 @@ const AppProvider = ({ children }) => {
         setExerData,
         foodData,
         setFoodData,
-        userInfo,
-        setUserInfo,
-        username,
-        setUsername,
-        profileImage,
-        setProfileImage,
         proteinNeed,
         fatNeed,
         carbNeed,
@@ -182,10 +272,18 @@ const AppProvider = ({ children }) => {
         fiberNeed,
         water,
         setWater,
+        waterNeed,
         sleep,
         setSleep,
         meditation,
         setMeditation,
+        activityFactor,
+        setActivityFactor,
+        foodHealth,
+        exerciseHealth,
+        skinHealth,
+        mentalHealth,
+        healthScore,
       }}
     >
       {children}

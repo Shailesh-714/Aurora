@@ -2,20 +2,14 @@ import React, { useEffect, useState, useContext, useRef } from "react";
 import {
   View,
   Text,
-  Button,
   StyleSheet,
   Image,
   TouchableOpacity,
-  StatusBar,
   ImageBackground,
   Dimensions,
-  PanResponder,
-  Animated,
-  Platform,
 } from "react-native";
 import { auth } from "../../firebaseConfig";
 import { signOut } from "firebase/auth";
-import * as ImagePicker from "expo-image-picker";
 import ProfileBg from "../assets/images/backgrounds/appScreenBg/profileBg.jpg";
 import BMI_Img from "../assets/images/icons/bmi.png";
 import HealthScoreImg from "../assets/images/icons/healthScore.png";
@@ -27,38 +21,38 @@ import LogoutImg from "../assets/images/icons/logout.png";
 import { AppContext } from "../context/AppContext";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Feather from "@expo/vector-icons/Feather";
-import { useNavigation } from "@react-navigation/native";
+import { useToastBar } from "../context/ToastBarContext";
+import { UserContext } from "../context/UserContext";
 
 const { width, height } = Dimensions.get("window");
 
 const ProfileScreen = ({ navigation }) => {
-  const {
-    userInfo,
-    setUserInfo,
-    username,
-    setUsername,
-    profileImage,
-    setProfileImage,
-  } = useContext(AppContext);
-
+  const { userInfo, username, profileImage } = useContext(UserContext);
+  const { showToastBar } = useToastBar();
+  console.log(userInfo);
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      alert("Logged out successfully!");
+
+      showToastBar(
+        "Logged Out",
+        "You have been logged out of your account!",
+        3000,
+        "green"
+      );
     } catch (error) {
-      alert("Error logging out: " + error.message);
+      showToastBar(
+        "Logged Error",
+        "An error occured while logging out! Please try again.!",
+        3000,
+        "red"
+      );
     }
   };
 
   return (
     <ImageBackground source={ProfileBg} style={{ flex: 1 }}>
       <View style={styles.container}>
-        <StatusBar
-          barStyle="light-content"
-          translucent={true}
-          backgroundColor="transparent"
-        />
         <SafeAreaView>
           <MyHeader
             title="Profile"

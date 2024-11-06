@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1000,
-    marginTop: 10,
+    marginVertical: 5,
   },
   titleContainer: {
     backgroundColor: "white",

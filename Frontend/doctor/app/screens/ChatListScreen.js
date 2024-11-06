@@ -11,7 +11,7 @@ import {
 import MyHeader from "../components/tab_bar/MyHeader";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ChatListBg from "../assets/images/backgrounds/appScreenBg/chatList.jpg";
+import ChatListBg from "../assets/images/backgrounds/appScreenBg/chat.jpg";
 import { LinearGradient } from "expo-linear-gradient";
 
 const chatList = [
@@ -69,7 +69,7 @@ const ChatListScreen = () => {
   return (
     <ImageBackground style={{ flex: 1 }} source={ChatListBg}>
       <SafeAreaView style={styles.container}>
-        <MyHeader title="Chats" titleColor="#7C4D96" />
+        <MyHeader title="Chats" titleColor="#793896" />
 
         {/* Chat list */}
         <FlatList

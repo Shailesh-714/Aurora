@@ -22,6 +22,10 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useToastBar } from "../context/ToastBarContext";
+import { doc, updateDoc } from "firebase/firestore";
+import { auth, db } from "../../firebaseConfig";
+import { UserContext } from "../context/UserContext";
 const { height, width } = Dimensions.get("window");
 
 const EditProfileScreen = () => {
@@ -32,7 +36,8 @@ const EditProfileScreen = () => {
     setUsername,
     profileImage,
     setProfileImage,
-  } = useContext(AppContext); // Use the context to access global state
+  } = useContext(UserContext); // Use the context to access global state
+  const { showToastBar } = useToastBar();
   const navigation = useNavigation();
   const [localUserInfo, setLocalUserInfo] = useState({ ...userInfo }); // Local state to handle input changes
   const [localUsername, setLocalUsername] = useState(username);
@@ -99,14 +104,41 @@ const EditProfileScreen = () => {
     setMediaModal(false);
   };
 
-  const handleUpdate = () => {
-    setUserInfo(localUserInfo);
-    setUsername(localUsername);
-    Alert.alert(
-      "Profile Updated",
-      "Your profile information has been updated."
-    );
-    navigation.goBack();
+  const handleUpdate = async () => {
+    try {
+      const newUserData = {
+        userName: localUsername,
+        weight: localUserInfo.weight,
+        height: localUserInfo.height,
+        age: localUserInfo.age,
+        gender: localUserInfo.gender,
+        bmi: localUserInfo.bmi,
+      };
+      // Get a reference to the document
+      const userDocRef = doc(db, "users", auth.currentUser.uid);
+
+      // Update the document with new data
+      await updateDoc(userDocRef, newUserData);
+
+      console.log("User data updated successfully!");
+      setUserInfo(localUserInfo);
+      setUsername(localUsername);
+      showToastBar(
+        `Profile updated!`,
+        "Your profile has been successfully updated",
+        3000,
+        "green"
+      );
+      navigation.goBack();
+    } catch (error) {
+      console.error("Error updating user data: ", error);
+      showToastBar(
+        `Error!`,
+        "An Error Occurred while updating your profile",
+        3000,
+        "red"
+      );
+    }
   };
   const [genderModalVisible, setGenderModalVisible] = useState(false); // Modal visibility state
 
