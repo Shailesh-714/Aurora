@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  ActivityIndicator,
   ScrollView,
   Image,
   ImageBackground,
+  Platform,
+  Dimensions,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import * as Progress from "react-native-progress";
@@ -19,12 +20,12 @@ import { useNavigation } from "@react-navigation/native";
 import { data as initialData } from "../data/ExploreData";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ExploreBg from "../assets/images/backgrounds/appScreenBg/explore.jpg";
+const { height, width } = Dimensions.get("window");
 
 // Utility function to shuffle array
 const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
 
 const ExploreScreen = () => {
-  const navigation = useNavigation();
   const [shuffledData, setShuffledData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUrl, setSelectedUrl] = useState("");
@@ -203,6 +204,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     position: "absolute",
+    top: Platform.OS === "ios" ? height * 0.05 : 0,
     bottom: 0,
     left: 0,
     right: 0,

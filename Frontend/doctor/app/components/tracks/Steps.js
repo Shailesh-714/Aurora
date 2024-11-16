@@ -8,15 +8,15 @@ import {
 import React, { useEffect, useState } from "react";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import ProgressBar from "../ProgressBar";
-import { Pedometer } from "expo-sensors";
+import { Pedometer, Accelerometer } from "expo-sensors";
 
 const Steps = () => {
   const [steps, setSteps] = useState(0);
   const goal = 10000;
+  const [lastAcceleration, setLastAcceleration] = useState(null);
+  const [stepDetected, setStepDetected] = useState(false);
 
-  const getProgress = (steps) => {
-    return Math.min(steps / goal, 1);
-  };
+  const getProgress = (steps) => Math.min(steps / goal, 1);
 
   const resetStepsAtMidnight = () => {
     const now = new Date();
@@ -40,11 +40,28 @@ const Steps = () => {
     return true;
   };
 
+  const detectStepFromAcceleration = (acceleration) => {
+    const threshold = 1.2; // Adjust this threshold for sensitivity
+    const timeDelay = 200; // Minimum delay between steps in milliseconds
+
+    if (
+      lastAcceleration &&
+      !stepDetected &&
+      Math.abs(acceleration - lastAcceleration) > threshold
+    ) {
+      setSteps((prevSteps) => prevSteps + 1);
+      setStepDetected(true);
+
+      setTimeout(() => setStepDetected(false), timeDelay);
+    }
+    setLastAcceleration(acceleration);
+  };
+
   useEffect(() => {
-    const startPedometer = async () => {
+    const startSensor = async () => {
       const hasPermission = await requestPermissions();
       if (hasPermission) {
-        try {
+        if (Platform.OS === "ios") {
           const available = await Pedometer.isAvailableAsync();
           if (available) {
             const subscription = Pedometer.watchStepCount((result) => {
@@ -54,15 +71,20 @@ const Steps = () => {
           } else {
             console.log("Pedometer is not available on this device.");
           }
-        } catch (error) {
-          console.error("Error starting pedometer:", error);
+        } else if (Platform.OS === "android") {
+          const subscription = Accelerometer.addListener(({ x, y, z }) => {
+            const acceleration = Math.sqrt(x * x + y * y + z * z);
+            detectStepFromAcceleration(acceleration);
+          });
+          Accelerometer.setUpdateInterval(100); // Update frequency in ms
+          return () => subscription && subscription.remove();
         }
       } else {
-        console.log("Activity recognition permission not granted.");
+        console.log("Permission not granted.");
       }
     };
 
-    startPedometer();
+    startSensor();
     resetStepsAtMidnight();
   }, []);
 

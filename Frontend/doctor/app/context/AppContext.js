@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect, useContext } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { auth } from "../../firebaseConfig";
+import { auth, db } from "../../firebaseConfig";
 import { UserContext } from "./UserContext";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore"; // Firestore functions
 
 const AppContext = createContext();
 
@@ -30,7 +31,46 @@ const AppProvider = ({ children }) => {
   const [skinHealth, setSkinHealth] = useState(0);
   const [mentalHealth, setMentalHealth] = useState(0);
   const [healthScore, setHealthScore] = useState(0);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [lastResetDate, setLastResetDate] = useState(null);
 
+  const resetData = () => {
+    setExerData({ calories: 0, minutes: 0 });
+    setFoodData({
+      calories: 0,
+      protein: 0,
+      fat: 0,
+      carbs: 0,
+      fiber: 0,
+    });
+    setProteinNeed(0);
+    setFatNeed(0);
+    setCarbNeed(0);
+    setCalNeed(0);
+    setFiberNeed(0);
+    setActivityFactor(1.55);
+    setWater(0);
+    setWaterNeed(0);
+    setSleep(0);
+    setMeditation(0);
+    setFoodHealth(0);
+    setExerciseHealth(0);
+    setSkinHealth(0);
+    setMentalHealth(0);
+    setHealthScore(0);
+  };
+
+  const checkForNewDay = () => {
+    const today = new Date().toDateString();
+    if (lastResetDate !== today) {
+      resetData();
+      setLastResetDate(today);
+    }
+  };
+
+  useEffect(() => {
+    checkForNewDay();
+  }, [lastResetDate]);
   const calculateBMR = (weight, height, age, gender) => {
     if (gender.toLowerCase() === "male") {
       return 10 * weight + 6.25 * height - 5 * age + 5;
@@ -57,20 +97,107 @@ const AppProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    const loadStoredData = async () => {
-      const currentUserId = !!auth.currentUser ? auth.currentUser.uid : "";
+  // Load data from Firestore
+  const loadStoredData = async () => {
+    const currentUserId = auth.currentUser ? auth.currentUser.uid : "";
+    if (currentUserId) {
+      const userDocRef = doc(db, "user_data", currentUserId);
       try {
-        const activityFactorData = await AsyncStorage.getItem(
-          `${currentUserId}activityFactor`
-        );
-        setActivityFactor(parseFloat(activityFactorData) || 1.55);
-        const exerData = await AsyncStorage.getItem(`${currentUserId}exerData`);
-        setExerData(JSON.parse(exerData) || { calories: 0, minutes: 0 });
+        const docSnap = await getDoc(userDocRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setLastResetDate(data.lastResetDate || new Date().toDateString());
+          setActivityFactor(data.activityFactor || 1.55);
+          setExerData(data.exerData || { calories: 0, minutes: 0 });
+          setFoodData(
+            data.foodData || {
+              calories: 0,
+              protein: 0,
+              fat: 0,
+              carbs: 0,
+              fiber: 0,
+            }
+          );
+          setWater(data.water || 0);
+          setSleep(data.sleep || 0);
+          setMeditation(data.meditation || 0);
+          setFoodHealth(data.foodHealth || 0);
+          setExerciseHealth(data.exerciseHealth || 0);
+          setSkinHealth(data.skinHealth || 0);
+          setMentalHealth(data.mentalHealth || 0);
+          setHealthScore(data.healthScore || 0);
+        }
+        setDataLoaded(true);
+      } catch (error) {
+        console.error("Error retrieving data from Firestore:", error);
+      }
+    }
+  };
 
-        const foodData = await AsyncStorage.getItem(`${currentUserId}foodData`);
+  // Store data to Firestore
+  const storeData = async () => {
+    const currentUserId = auth.currentUser ? auth.currentUser.uid : "";
+    if (currentUserId && dataLoaded) {
+      const userDocRef = doc(db, "user_data", currentUserId);
+      try {
+        await setDoc(
+          userDocRef,
+          {
+            activityFactor,
+            exerData,
+            foodData,
+            water,
+            sleep,
+            meditation,
+            foodHealth,
+            exerciseHealth,
+            skinHealth,
+            mentalHealth,
+            healthScore,
+            lastResetDate,
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.error("Error saving data to Firestore:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadStoredData();
+  }, []);
+
+  useEffect(() => {
+    storeData();
+  }, [
+    activityFactor,
+    exerData,
+    foodData,
+    water,
+    sleep,
+    meditation,
+    foodHealth,
+    exerciseHealth,
+    skinHealth,
+    mentalHealth,
+    healthScore,
+    lastResetDate,
+    dataLoaded,
+  ]);
+
+  // Load new user's data from Firestore
+  const loadNewUserData = async (userId) => {
+    const userDocRef = doc(db, "user_data", userId);
+    try {
+      const docSnap = await getDoc(userDocRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setLastResetDate(data.lastResetDate || new Date().toDateString());
+        setActivityFactor(data.activityFactor || 1.55);
+        setExerData(data.exerData || { calories: 0, minutes: 0 });
         setFoodData(
-          JSON.parse(foodData) || {
+          data.foodData || {
             calories: 0,
             protein: 0,
             fat: 0,
@@ -78,47 +205,31 @@ const AppProvider = ({ children }) => {
             fiber: 0,
           }
         );
-
-        const storedWater = await AsyncStorage.getItem(`${currentUserId}water`);
-        setWater(parseInt(storedWater) || 0);
-
-        const storedSleep = await AsyncStorage.getItem(`${currentUserId}sleep`);
-        setSleep(parseFloat(storedSleep) || 0);
-
-        const storedMeditation = await AsyncStorage.getItem(
-          `${currentUserId}meditation`
-        );
-        setMeditation(parseInt(storedMeditation) || 0);
-
-        const storedFoodHealth = await AsyncStorage.getItem(
-          `${currentUserId}foodHealth`
-        );
-        setFoodHealth(parseFloat(storedFoodHealth).toFixed(1) || 0);
-
-        const storedExerciseHealth = await AsyncStorage.getItem(
-          `${currentUserId}exerciseHealth`
-        );
-        setExerciseHealth(parseFloat(storedExerciseHealth).toFixed(1) || 0);
-
-        const storedSkinHealth = await AsyncStorage.getItem(
-          `${currentUserId}skinHealth`
-        );
-        setSkinHealth(parseFloat(storedSkinHealth).toFixed(1) || 0);
-
-        const storedMentalHealth = await AsyncStorage.getItem(
-          `${currentUserId}mentalHealth`
-        );
-        setMentalHealth(parseFloat(storedMentalHealth).toFixed(1) || 0);
-        const storedHealthScore = await AsyncStorage.getItem(
-          `${currentUserId}healthScore`
-        );
-        setHealthScore(parseFloat(storedHealthScore).toFixed(1) || 0);
-      } catch (error) {
-        console.error("Error retrieving data from AsyncStorage:", error);
+        setWater(data.water || 0);
+        setSleep(data.sleep || 0);
+        setMeditation(data.meditation || 0);
+        setFoodHealth(data.foodHealth || 0);
+        setExerciseHealth(data.exerciseHealth || 0);
+        setSkinHealth(data.skinHealth || 0);
+        setMentalHealth(data.mentalHealth || 0);
+        setHealthScore(data.healthScore || 0);
       }
-    };
+    } catch (error) {
+      console.error("Error retrieving data from Firestore:", error);
+    }
+  };
 
-    loadStoredData();
+  // Monitor auth state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await loadNewUserData(user.uid);
+      } else {
+        resetData();
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -187,76 +298,21 @@ const AppProvider = ({ children }) => {
   ]);
 
   useEffect(() => {
-    setHealthScore(
-      parseFloat(
-        ((foodHealth + exerciseHealth + skinHealth + mentalHealth) / 4).toFixed(
-          2
-        )
-      )
-    );
+    const score = parseFloat(
+      (Math.min(foodHealth, 1) +
+        Math.min(exerciseHealth, 1) +
+        Math.min(skinHealth, 1) +
+        Math.min(mentalHealth, 1)) /
+        4
+    ).toFixed(2);
+    if (!score || score < 0) {
+      setHealthScore(0);
+    } else if (score >= 0 && score <= 1) {
+      setHealthScore(score);
+    } else {
+      setHealthScore(1);
+    }
   }, [foodHealth, exerciseHealth, skinHealth, mentalHealth]);
-
-  useEffect(() => {
-    const storeData = async () => {
-      const currentUserId = !!auth.currentUser ? auth.currentUser.uid : "";
-      try {
-        await AsyncStorage.setItem(
-          `${currentUserId}activityFactor`,
-          activityFactor.toString()
-        );
-        await AsyncStorage.setItem(
-          `${currentUserId}exerData`,
-          JSON.stringify(exerData)
-        );
-        await AsyncStorage.setItem(
-          `${currentUserId}foodData`,
-          JSON.stringify(foodData)
-        );
-
-        await AsyncStorage.setItem(`${currentUserId}water`, water.toString());
-        await AsyncStorage.setItem(`${currentUserId}sleep`, sleep.toString());
-        await AsyncStorage.setItem(
-          `${currentUserId}meditation`,
-          meditation.toString()
-        );
-        await AsyncStorage.setItem(
-          `${currentUserId}foodHealth`,
-          foodHealth.toString()
-        );
-        await AsyncStorage.setItem(
-          `${currentUserId}exerciseHealth`,
-          exerciseHealth.toString()
-        );
-        await AsyncStorage.setItem(
-          `${currentUserId}skinHealth`,
-          skinHealth.toString()
-        );
-        await AsyncStorage.setItem(
-          `${currentUserId}mentalHealth`,
-          mentalHealth.toString()
-        );
-        await AsyncStorage.setItem(
-          `${currentUserId}healthScore`,
-          healthScore.toString()
-        );
-      } catch (error) {
-        console.error("Error saving data to AsyncStorage:", error);
-      }
-    };
-    storeData();
-  }, [
-    activityFactor,
-    exerData,
-    foodData,
-    water,
-    sleep,
-    meditation,
-    foodHealth,
-    exerciseHealth,
-    skinHealth,
-    mentalHealth,
-    healthScore,
-  ]);
 
   return (
     <AppContext.Provider

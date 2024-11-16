@@ -51,7 +51,9 @@ const Exercise = () => {
           alignItems: "center",
         }}
       >
-        <FontAwesome5 name="fire" size={22} color="#F6AD3E" />
+        <View style={{ width: 25, alignItems: "center" }}>
+          <FontAwesome5 name="fire" size={22} color="#F6AD3E" />
+        </View>
         <Text
           style={{
             marginHorizontal: 10,
@@ -59,7 +61,8 @@ const Exercise = () => {
             fontWeight: "500",
           }}
         >
-          {exerData.calories || 0} cal
+          {exerData.calories || 0}{" "}
+          <Text style={{ fontWeight: "bold" }}>cal</Text>
         </Text>
       </View>
       <View
@@ -69,7 +72,9 @@ const Exercise = () => {
           alignItems: "center",
         }}
       >
-        <AntDesign name="clockcircle" size={20} color="#F6AD3E" />
+        <View style={{ width: 25, alignItems: "center" }}>
+          <AntDesign name="clockcircle" size={20} color="#F6AD3E" />
+        </View>
         <Text
           style={{
             marginHorizontal: 10,
@@ -80,7 +85,8 @@ const Exercise = () => {
           {Math.floor(exerData.minutes / 60)
             .toString()
             .padStart(2, "0") || 0}
-          :{(exerData.minutes % 60).toString().padStart(2, "0") || "00"} hr
+          :{(exerData.minutes % 60).toString().padStart(2, "0") || "00"}{" "}
+          <Text style={{ fontWeight: "bold" }}>hr</Text>
         </Text>
       </View>
 

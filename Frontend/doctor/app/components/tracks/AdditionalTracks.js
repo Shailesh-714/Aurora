@@ -1,30 +1,46 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
   View,
   Modal,
   TextInput,
-  Button,
-  Dimensions,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import {
   AntDesign,
   Ionicons,
   FontAwesome6,
   MaterialCommunityIcons,
+  Entypo,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import { AppContext } from "../../context/AppContext";
 const { width, height } = Dimensions.get("window");
 
-// Modal Component to get input data
-const InputModal = ({ visible, onClose, name, unit, value, setValue }) => {
-  const [input, setInput] = useState(String(value || ""));
+const InputModal = ({
+  visible,
+  onClose,
+  name,
+  unit,
+  value,
+  setValue,
+  icon,
+  color,
+}) => {
+  const [input, setInput] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      setInput(value); // Update input whenever the modal opens or value changes
+    }
+  }, [visible, value]);
+
   const handleSave = () => {
-    setValue(parseInt(input));
-    setInput("");
+    setValue(parseInt(input) || 0);
+    setInput(0);
     onClose();
   };
 
@@ -37,63 +53,68 @@ const InputModal = ({ visible, onClose, name, unit, value, setValue }) => {
               width: "100%",
               flexDirection: "row",
               gap: 15,
-            }}
-          >
-            <TouchableOpacity onPress={onClose} style={{ alignSelf: "center" }}>
-              <Ionicons name="arrow-back" size={18} color="black" />
-            </TouchableOpacity>
-            <Text style={styles.modalTitle}>{name}</Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "100%",
               alignItems: "center",
+              justifyContent: "space-between",
             }}
           >
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-              No: of {unit}
-            </Text>
-            <TextInput
-              style={[
-                styles.input,
-                { borderColor: isFocused ? "#ff7676" : "black" },
-              ]}
-              keyboardType="numeric"
-              value={String(input || "")}
-              onChangeText={(text) => setInput(text)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-            />
-          </View>
-
-          <TouchableOpacity
-            onPress={handleSave}
-            style={{
-              backgroundColor: "#ff7676",
-              borderRadius: 10,
-              alignSelf: "flex-end",
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "bold",
-                color: "white",
-                paddingVertical: 10,
-                paddingHorizontal: 15,
+            <TouchableOpacity
+              onPress={() => {
+                setInput(0);
+                onClose();
               }}
+              style={{ alignSelf: "center" }}
             >
-              Save
-            </Text>
-          </TouchableOpacity>
+              <Ionicons name="close" size={22} color="black" />
+            </TouchableOpacity>
+
+            <Text style={styles.modalTitle}>{name}</Text>
+            <TouchableOpacity onPress={handleSave}>
+              <MaterialIcons name="done" size={22} color={color} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.modalRow}>
+            <View style={styles.modalCounter}>
+              <TouchableOpacity
+                style={{
+                  padding: 15,
+                  backgroundColor: color,
+                  borderRadius: 10,
+                }}
+                onPress={() => setInput(Math.max(0, parseInt(input) - 1))}
+              >
+                <Entypo name="minus" size={16} color="white" />
+              </TouchableOpacity>
+              <TextInput
+                style={[styles.input]}
+                keyboardType="numeric"
+                value={String(input || 0)}
+                onChangeText={(text) => {
+                  // Remove any leading zeros
+                  const sanitizedText = text.replace(/^0+/, "");
+                  setInput(sanitizedText);
+                }}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+              />
+              <TouchableOpacity
+                style={{
+                  padding: 15,
+                  backgroundColor: color,
+                  borderRadius: 10,
+                }}
+                onPress={() => setInput(parseInt(input) + 1)}
+              >
+                <Entypo name="plus" size={16} color="white" />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <Text style={{ fontWeight: "bold", fontSize: 16 }}>{unit}</Text>
         </View>
       </View>
     </Modal>
   );
 };
 
-// Main Component
 const AdditionalTracks = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);
@@ -113,140 +134,108 @@ const AdditionalTracks = () => {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 30,
-        marginVertical: 20,
-        rowGap: 25,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.41,
-        elevation: 2,
-      }}
-    >
+    <View style={styles.container}>
       {/* Water Tracking */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-          <View style={{ width: 20 }}>
-            <FontAwesome6 name="glass-water" size={18} color="#228bc7" />
-          </View>
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Water</Text>
-            <Text style={{ fontSize: 12, color: "grey" }}>
-              {water} of {waterNeed} Glasses
-            </Text>
-          </View>
-        </View>
-        <AntDesign
-          name="pluscircleo"
-          size={18}
-          color="black"
-          onPress={() =>
-            handleOpenModal({
-              name: "Water",
-              unit: "Glasses",
-              value: water,
-              setValue: setWater,
-            })
-          }
-        />
-      </View>
-
+      <TrackingItem
+        label="Water"
+        value={`${water} of ${waterNeed} Glasses`}
+        icon={<FontAwesome6 name="glass-water" size={18} color="#228bc7" />}
+        onPress={() =>
+          handleOpenModal({
+            name: "Water",
+            icon: <FontAwesome6 name="glass-water" size={18} color="#228bc7" />,
+            unit: "Glasses",
+            value: water,
+            setValue: setWater,
+            color: "#228bc7",
+          })
+        }
+      />
       {/* Sleep Tracking */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-          <View style={{ width: 20 }}>
-            <Ionicons name="cloudy-night-sharp" size={18} color="#8856b5" />
-          </View>
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Sleep</Text>
-            <Text style={{ fontSize: 12, color: "grey" }}>{sleep} of 8 hr</Text>
-          </View>
-        </View>
-        <AntDesign
-          name="pluscircleo"
-          size={18}
-          color="black"
-          onPress={() =>
-            handleOpenModal({
-              name: "Sleep",
-              unit: "Hours",
-              value: sleep,
-              setValue: setSleep,
-            })
-          }
-        />
-      </View>
-
+      <TrackingItem
+        label="Sleep"
+        value={`${sleep} of 8 hr`}
+        icon={<Ionicons name="cloudy-night-sharp" size={18} color="#8856b5" />}
+        onPress={() =>
+          handleOpenModal({
+            name: "Sleep",
+            icon: (
+              <Ionicons name="cloudy-night-sharp" size={18} color="#8856b5" />
+            ),
+            unit: "Hours",
+            value: sleep,
+            setValue: setSleep,
+            color: "#8856b5",
+          })
+        }
+      />
       {/* Meditation Tracking */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-          <View style={{ width: 20 }}>
-            <MaterialCommunityIcons
-              name="meditation"
-              size={18}
-              color="#32CD32"
-            />
-          </View>
-          <View>
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Meditation</Text>
-            <Text style={{ fontSize: 12, color: "grey" }}>
-              {meditation} min
-            </Text>
-          </View>
-        </View>
-        <AntDesign
-          name="pluscircleo"
-          size={18}
-          color="black"
-          onPress={() =>
-            handleOpenModal({
-              name: "Meditation",
-              unit: "Minutes",
-              value: meditation,
-              setValue: setMeditation,
-            })
-          }
-        />
-      </View>
-
+      <TrackingItem
+        label="Meditation"
+        value={`${meditation} min`}
+        icon={
+          <MaterialCommunityIcons name="meditation" size={18} color="#32CD32" />
+        }
+        onPress={() =>
+          handleOpenModal({
+            name: "Meditation",
+            icon: (
+              <MaterialCommunityIcons
+                name="meditation"
+                size={18}
+                color="#32CD32"
+              />
+            ),
+            unit: "Minutes",
+            value: meditation,
+            setValue: setMeditation,
+            color: "#32CD32",
+          })
+        }
+      />
       {/* Modal for Input */}
       <InputModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         name={selectedTrack?.name}
+        icon={selectedTrack?.icon}
         unit={selectedTrack?.unit}
         value={selectedTrack?.value}
         setValue={selectedTrack?.setValue}
+        color={selectedTrack?.color}
       />
     </View>
   );
 };
 
+const TrackingItem = ({ label, value, icon, onPress }) => (
+  <View style={styles.trackingItem}>
+    <View style={styles.trackingItemInfo}>
+      <View style={{ width: 20 }}>{icon}</View>
+      <View>
+        <Text style={{ fontSize: 16, fontWeight: "bold" }}>{label}</Text>
+        <Text style={{ fontSize: 12, color: "grey" }}>{value}</Text>
+      </View>
+    </View>
+    <AntDesign name="pluscircleo" size={18} color="black" onPress={onPress} />
+  </View>
+);
+
 export default AdditionalTracks;
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 30,
+    marginVertical: 20,
+    rowGap: 25,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.41,
+    elevation: 2,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
@@ -257,20 +246,41 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     backgroundColor: "white",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 20,
     alignItems: "center",
-    gap: 15,
+    gap: 20,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
   },
-  input: {
-    borderBottomWidth: 2,
+  modalRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    width: "100%",
+    alignItems: "center",
+  },
+  modalCounter: {
     borderRadius: 5,
-    fontSize: 14,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  input: {
+    fontSize: 18,
     fontWeight: "500",
-    textAlign: "right",
-    paddingHorizontal: 5,
+    textAlign: "center",
+    paddingHorizontal: 15,
+  },
+  trackingItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  trackingItemInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
   },
 });

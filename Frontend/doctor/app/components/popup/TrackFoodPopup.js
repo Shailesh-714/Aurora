@@ -145,10 +145,15 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
                   justifyContent: "space-between",
                   marginVertical: 30,
                   marginHorizontal: 10,
+                  alignItems: "center",
                 }}
               >
-                <Text style={{ fontSize: 16 }}>Food Quantity</Text>
-                <View style={{ flexDirection: "row", gap: 5 }}>
+                <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                  Food Quantity
+                </Text>
+                <View
+                  style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
+                >
                   <TextInput
                     placeholder={"0"}
                     placeholderTextColor={"grey"}
@@ -157,90 +162,37 @@ const TrackFoodPopup = ({ visible, onClose, title, data }) => {
                     value={quantity}
                     onChangeText={(value) => setQuantity(value)}
                   />
-                  <Text style={{ fontSize: 16 }}>{selectFood.unit}</Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-
-                  marginHorizontal: 10,
-                }}
-              >
-                <Text style={{ fontSize: 16 }}>Protein</Text>
-                <View style={{ flexDirection: "row", gap: 5 }}>
-                  <Text style={{ fontSize: 16 }}>
-                    {(selectFood.protein / selectFood.quantity) * quantity || 0}
+                  <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                    {selectFood.unit}
                   </Text>
-                  <Text style={{ fontSize: 16 }}>g</Text>
                 </View>
               </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-
-                  marginHorizontal: 10,
-                }}
-              >
-                <Text style={{ fontSize: 16 }}>Fat</Text>
-                <View style={{ flexDirection: "row", gap: 5 }}>
-                  <Text style={{ fontSize: 16 }}>
-                    {(selectFood.fat / selectFood.quantity) * quantity || 0}
-                  </Text>
-                  <Text style={{ fontSize: 16 }}>g</Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-
-                  marginHorizontal: 10,
-                }}
-              >
-                <Text style={{ fontSize: 16 }}>Carbs</Text>
-                <View style={{ flexDirection: "row", gap: 5 }}>
-                  <Text style={{ fontSize: 16 }}>
-                    {(selectFood.carbs / selectFood.quantity) * quantity || 0}
-                  </Text>
-                  <Text style={{ fontSize: 16 }}>g</Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-
-                  marginHorizontal: 10,
-                }}
-              >
-                <Text style={{ fontSize: 16 }}>Fiber</Text>
-                <View style={{ flexDirection: "row", gap: 5 }}>
-                  <Text style={{ fontSize: 16 }}>
-                    {(selectFood.fiber / selectFood.quantity) * quantity || 0}
-                  </Text>
-                  <Text style={{ fontSize: 16 }}>g</Text>
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-
-                  marginHorizontal: 10,
-                }}
-              >
-                <Text style={{ fontSize: 16 }}>Calories</Text>
-                <View style={{ flexDirection: "row", gap: 5 }}>
-                  <Text style={{ fontSize: 16 }}>
-                    {(selectFood.calories / selectFood.quantity) * quantity ||
-                      0}
-                  </Text>
-                  <Text style={{ fontSize: 16 }}>cal</Text>
-                </View>
-              </View>
+              {["Protein", "Fat", "Carbs", "Fiber", "Calories"].map(
+                (label, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginHorizontal: 10,
+                    }}
+                  >
+                    <Text style={{ fontSize: 16 }}>{label}</Text>
+                    <View style={{ flexDirection: "row", gap: 5 }}>
+                      <Text style={{ fontSize: 16 }}>
+                        {(
+                          (selectFood[label.toLowerCase()] /
+                            selectFood.quantity) *
+                            quantity || 0
+                        ).toFixed(2)}
+                      </Text>
+                      <Text style={{ fontSize: 16 }}>
+                        {label === "Calories" ? "cal" : "g"}
+                      </Text>
+                    </View>
+                  </View>
+                )
+              )}
             </View>
           ) : (
             <View style={styles.container}>

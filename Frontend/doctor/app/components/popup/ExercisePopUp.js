@@ -40,8 +40,8 @@ const ExercisePopUp = ({ visible, onClose, title, data }) => {
 
   const handleSave = () => {
     setExerData({
-      calories: exerData.calories+totCalories(parseInt(minutes) || 0),
-      minutes: exerData.minutes+parseInt(minutes),
+      calories: exerData.calories + totCalories(parseInt(minutes) || 0),
+      minutes: exerData.minutes + parseInt(minutes),
     });
     setMinutes(0);
     setDetailsTab(false);
@@ -124,6 +124,9 @@ const ExercisePopUp = ({ visible, onClose, title, data }) => {
                     color="black"
                   />
                 </TouchableOpacity>
+                <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+                  {selectExercise.name}
+                </Text>
                 <TouchableOpacity onPress={handleSave}>
                   <MaterialIcons name="done" size={24} color="black" />
                 </TouchableOpacity>
@@ -140,7 +143,7 @@ const ExercisePopUp = ({ visible, onClose, title, data }) => {
                 <TextInput
                   placeholder="e.g. 30"
                   placeholderTextColor={"grey"}
-                  style={{ fontSize: 16 }}
+                  style={{ fontSize: 16, textAlign: "right" }}
                   keyboardType="numeric"
                   value={minutes}
                   onChangeText={(value) => setMinutes(value)}
@@ -244,7 +247,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 30,
     paddingVertical: 5,
-    paddingHorizontal:15
+    paddingHorizontal: 15,
   },
   item: {
     margin: 15,

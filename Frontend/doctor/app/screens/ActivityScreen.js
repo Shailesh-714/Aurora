@@ -1,157 +1,236 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  FlatList,
-  TouchableOpacity,
   Dimensions,
   ImageBackground,
+  ScrollView,
 } from "react-native";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as Notifications from "expo-notifications";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ActivityBg from "../assets/images/backgrounds/appScreenBg/activity.jpg";
+import { AppContext } from "../context/AppContext";
+import { auth } from "../../firebaseConfig";
 
-const { height, width } = Dimensions.get("window");
-
-const healthReminders = [
-  {
-    id: "1",
-    title: "Hydration Reminder",
-    description: "Drink a glass of water.",
-  },
-  {
-    id: "2",
-    title: "Exercise Reminder",
-    description: "Take a 5-minute stretch break.",
-  },
-  {
-    id: "3",
-    title: "Sleep Reminder",
-    description: "Consider winding down for better sleep.",
-  },
-  {
-    id: "4",
-    title: "Mindfulness Reminder",
-    description: "Take a few deep breaths.",
-  },
-  {
-    id: "5",
-    title: "Posture Check",
-    description: "Check your posture to avoid strain.",
-  },
-  {
-    id: "6",
-    title: "Snack Reminder",
-    description: "Grab a healthy snack if you’re hungry.",
-  },
-  {
-    id: "7",
-    title: "Eye Care",
-    description: "Rest your eyes from screen time for a minute.",
-  },
-];
-
-// Schedule one notification each hour with a random reminder
-const scheduleHourlyNotification = async () => {
-  const isScheduled = await AsyncStorage.getItem("hourlyNotificationScheduled");
-
-  if (isScheduled === null) {
-    let lastIndex = JSON.parse(
-      (await AsyncStorage.getItem("lastReminderIndex")) || "0"
-    );
-
-    const scheduleNextNotification = async () => {
-      // Get the next reminder in sequence
-      const nextReminder = healthReminders[lastIndex];
-
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: nextReminder.title,
-          body: nextReminder.description,
-        },
-        trigger: {
-          seconds: 3600, // Trigger every hour
-          repeats: true,
-        },
-      });
-
-      // Update the last index for the next notification
-      lastIndex = (lastIndex + 1) % healthReminders.length;
-      await AsyncStorage.setItem(
-        "lastReminderIndex",
-        JSON.stringify(lastIndex)
-      );
-    };
-
-    // Schedule the first notification and set up repeated notifications
-    await scheduleNextNotification();
-    await AsyncStorage.setItem("hourlyNotificationScheduled", "true");
-  }
-};
-
-// Log notifications to AsyncStorage and update displayed notifications
-const handleNotificationReceived = async (notification) => {
-  const notificationLog = JSON.parse(
-    (await AsyncStorage.getItem("notificationLog")) || "[]"
-  );
-
-  const newNotification = {
-    id: notification.request.identifier,
-    title: notification.request.content.title,
-    description: notification.request.content.body,
-    timestamp: new Date().toLocaleString(),
-  };
-
-  notificationLog.push(newNotification);
-  await AsyncStorage.setItem(
-    "notificationLog",
-    JSON.stringify(notificationLog)
-  );
-};
+const { height } = Dimensions.get("window");
 
 const ActivityScreen = () => {
-  const [displayedNotifications, setDisplayedNotifications] = useState([]);
+  const {
+    water,
+    waterNeed,
+    exerciseHealth,
+    foodHealth,
+    sleep,
+    healthScore,
+    skinHealth,
+    mentalHealth,
+  } = useContext(AppContext);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      const storedNotifications = JSON.parse(
-        (await AsyncStorage.getItem("notificationLog")) || "[]"
-      );
-      setDisplayedNotifications(storedNotifications);
+  const [suggestions, setSuggestions] = useState([]);
+  const [lastGeneratedTimes, setLastGeneratedTimes] = useState({});
+
+  const SUGGESTIONS_KEY = `${auth.currentUser.uid}suggestions`;
+  const TIMES_KEY = "lastGeneratedTimes";
+
+  const saveData = async () => {
+    try {
+      await AsyncStorage.setItem(SUGGESTIONS_KEY, JSON.stringify(suggestions));
+      await AsyncStorage.setItem(TIMES_KEY, JSON.stringify(lastGeneratedTimes));
+    } catch (error) {
+      console.error("Error saving data to AsyncStorage:", error);
+    }
+  };
+
+  const loadData = async () => {
+    try {
+      const storedSuggestions = await AsyncStorage.getItem(SUGGESTIONS_KEY);
+      const storedTimes = await AsyncStorage.getItem(TIMES_KEY);
+
+      if (storedSuggestions) setSuggestions(JSON.parse(storedSuggestions));
+      if (storedTimes) setLastGeneratedTimes(JSON.parse(storedTimes));
+    } catch (error) {
+      console.error("Error loading data from AsyncStorage:", error);
+    }
+  };
+
+  const updateSuggestions = () => {
+    const newSuggestions = [];
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+
+    const addSuggestion = (key, title, suggestion) => {
+      const lastGenerated = lastGeneratedTimes[key];
+      const timeDiff = lastGenerated
+        ? (currentTime - new Date(lastGenerated)) / (1000 * 60 * 60)
+        : Infinity;
+
+      if (timeDiff >= 2) {
+        newSuggestions.push({
+          title,
+          suggestion,
+          timestamp: currentTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        });
+        setLastGeneratedTimes((prev) => ({ ...prev, [key]: currentTime }));
+      }
     };
 
-    // Schedule the notifications and listen for received notifications
-    scheduleHourlyNotification();
-    fetchNotifications();
+    const waterProgress = (water / waterNeed) * 100;
+    if (hours >= 8 && hours <= 20) {
+      if (waterProgress < 50) {
+        addSuggestion(
+          "hydration",
+          "Hydration Reminder",
+          "Stay hydrated! Drink more water to reach your daily goal."
+        );
+      } else if (waterProgress < 100) {
+        addSuggestion(
+          "hydration",
+          "Hydration Progress",
+          "Great job on drinking water! Keep it up."
+        );
+      } else {
+        addSuggestion(
+          "hydration",
+          "Hydration Goal Met",
+          "You’ve met your water intake goal for today! Good job!"
+        );
+      }
+    }
 
-    const subscription = Notifications.addNotificationReceivedListener(
-      handleNotificationReceived
+    // Check exercise
+    if ((hours >= 6 && hours <= 10) || (hours >= 17 && hours <= 20)) {
+      if (exerciseHealth < 0.5) {
+        addSuggestion(
+          "exercise",
+          "Exercise Reminder",
+          "It's a good time for some exercise. A quick walk or stretch can help."
+        );
+      } else if (exerciseHealth < 0.8) {
+        addSuggestion(
+          "exercise",
+          "Keep Exercising",
+          "Keep up the great work with your exercise!"
+        );
+      } else {
+        addSuggestion(
+          "exercise",
+          "Exercise Goal Met",
+          "You've met your exercise goals! Consider some light stretching."
+        );
+      }
+    }
+
+    // Nutrition
+    if (foodHealth < 0.5) {
+      addSuggestion(
+        "nutrition",
+        "Nutrition Reminder",
+        "Consider having a healthy snack to meet your nutrition needs."
+      );
+    } else if (foodHealth < 0.8) {
+      addSuggestion(
+        "nutrition",
+        "Nutrition Progress",
+        "You're on track with your food intake. Keep choosing nutritious options."
+      );
+    } else {
+      addSuggestion(
+        "nutrition",
+        "Nutrition Goal Met",
+        "Excellent nutrition today! You’re meeting your dietary goals."
+      );
+    }
+
+    // Sleep
+    if (hours >= 20) {
+      if (sleep < 6) {
+        addSuggestion(
+          "sleep",
+          "Sleep Reminder",
+          "Consider getting some rest soon for a full night's sleep."
+        );
+      } else if (sleep < 8) {
+        addSuggestion(
+          "sleep",
+          "Sleep Progress",
+          "You're doing well with your sleep, but aim for a bit more rest."
+        );
+      } else {
+        addSuggestion(
+          "sleep",
+          "Sleep Goal Met",
+          "You're well-rested. Keep up the great sleep hygiene!"
+        );
+      }
+    }
+
+    // Health Score
+    if (healthScore < 0.5) {
+      addSuggestion(
+        "healthScore",
+        "Health Score Improvement",
+        "Let’s focus on meeting a few more goals today to boost your health score."
+      );
+    } else if (healthScore < 0.8) {
+      addSuggestion(
+        "healthScore",
+        "Great Health Score",
+        "You're doing well! Keep building on your healthy habits."
+      );
+    } else {
+      addSuggestion(
+        "healthScore",
+        "Health Goal Achieved",
+        "Amazing! You're hitting all your health goals today."
+      );
+    }
+
+    setSuggestions((prevSuggestions) =>
+      newSuggestions.length > 0 ? newSuggestions : prevSuggestions
     );
+  };
 
-    return () => subscription.remove();
+  useEffect(() => {
+    loadData();
   }, []);
 
-  const renderItem = ({ item }) => (
-    <TouchableOpacity style={styles.notificationItem}>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-      <Text style={styles.timestamp}>{item.timestamp}</Text>
-    </TouchableOpacity>
-  );
+  useEffect(() => {
+    updateSuggestions();
+    saveData();
+  }, [
+    water,
+    exerciseHealth,
+    foodHealth,
+    sleep,
+    healthScore,
+    skinHealth,
+    mentalHealth,
+  ]);
 
   return (
     <ImageBackground style={{ flex: 1 }} source={ActivityBg}>
       <SafeAreaView style={styles.container}>
         <MyHeader title="Health Reminders" titleColor="#F14C6E" />
-        <FlatList
-          data={displayedNotifications}
-          keyExtractor={(item) => item.id}
-          renderItem={renderItem}
-          contentContainerStyle={styles.list}
-        />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {suggestions.length > 0 ? (
+            suggestions.map((item, index) => (
+              <View key={index} style={styles.notificationItem}>
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.suggestion}>{item.suggestion}</Text>
+                <Text style={styles.timestamp}>{item.timestamp}</Text>
+              </View>
+            ))
+          ) : (
+            <View style={styles.noSuggestions}>
+              <Text style={styles.noSuggestionsText}>No suggestions yet!</Text>
+            </View>
+          )}
+        </ScrollView>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -164,10 +243,6 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 15,
   },
-  list: {
-    paddingBottom: 0,
-    paddingHorizontal: width * 0.04,
-  },
   notificationItem: {
     backgroundColor: "#fff",
     padding: 15,
@@ -178,20 +253,33 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
+    marginHorizontal: 15,
   },
   title: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#333",
   },
-  description: {
+  suggestion: {
     fontSize: 14,
     color: "#666",
     marginTop: 5,
   },
   timestamp: {
     fontSize: 12,
-    color: "#999",
     marginTop: 5,
+    fontWeight: "500",
+    alignSelf: "flex-end",
+  },
+  noSuggestions: {
+    alignItems: "center",
+    marginTop: height * 0.35,
+    flex: 1,
+    justifyContent: "center",
+  },
+  noSuggestionsText: {
+    fontSize: 18,
+    color: "white",
+    fontWeight: "bold",
   },
 });

@@ -7,6 +7,14 @@ import { AppContext } from "../../context/AppContext";
 const HealthReport = () => {
   const { foodHealth, exerciseHealth, skinHealth, mentalHealth, healthScore } =
     useContext(AppContext);
+
+  if (
+    [foodHealth, exerciseHealth, skinHealth, mentalHealth, healthScore].some(
+      (value) => value === null || isNaN(value)
+    )
+  ) {
+    return null;
+  }
   const [healthRate, setHealthRate] = useState({
     color: "#ff7676",
     level: "low",
@@ -20,6 +28,7 @@ const HealthReport = () => {
       setHealthRate({ color: "#69c866", level: "Good" });
     }
   }, [healthScore]);
+
   return (
     <View
       style={{

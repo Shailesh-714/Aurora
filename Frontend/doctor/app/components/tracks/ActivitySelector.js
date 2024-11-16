@@ -9,25 +9,24 @@ import {
 import { AppContext } from "../../context/AppContext";
 
 const ActivitySelector = () => {
-  const { activityFactor, setActivityFactor } = useContext(AppContext); // Get activityFactor from context
+  const { activityFactor, setActivityFactor } = useContext(AppContext);
   const activityOptions = ["Light", "Moderate", "Active"];
-  const activityFactors = { Light: 1.2, Moderate: 1.55, Active: 1.725 }; // Corresponding factors
-  // Set the initial activity based on the context value
+  const activityFactors = { Light: 1.2, Moderate: 1.55, Active: 1.725 };
   const getDefaultActivity = () => {
     return (
       Object.keys(activityFactors).find(
         (key) => activityFactors[key] === activityFactor
-      ) || "Moderate" // Default to "Moderate" if no match
+      ) || "Moderate"
     );
   };
 
-  const [activity, setActivity] = useState(getDefaultActivity()); // Initialize activity from context
-  const [containerWidth, setContainerWidth] = useState(0); // To store the container's width
+  const [activity, setActivity] = useState(getDefaultActivity());
+  const [containerWidth, setContainerWidth] = useState(0);
   const slideAnim = useRef(new Animated.Value(0)).current;
 
   const handleClick = (option) => {
     setActivity(option);
-    setActivityFactor(activityFactors[option]); // Set activity factor based on selection
+    setActivityFactor(activityFactors[option]);
   };
 
   useEffect(() => {
@@ -36,7 +35,7 @@ const ActivitySelector = () => {
       const targetX = (containerWidth / activityOptions.length) * index;
 
       Animated.timing(slideAnim, {
-        toValue: targetX, // Move highlight based on option width
+        toValue: targetX,
         duration: 200,
         useNativeDriver: false,
       }).start();
@@ -44,7 +43,6 @@ const ActivitySelector = () => {
   }, [activity, containerWidth]);
 
   useEffect(() => {
-    // Update activity when context changes
     const newActivity = getDefaultActivity();
     setActivity(newActivity);
   }, [activityFactor]);
@@ -57,14 +55,14 @@ const ActivitySelector = () => {
         style={styles.container}
         onLayout={(event) => {
           const { width } = event.nativeEvent.layout;
-          setContainerWidth(width); // Capture container width dynamically
+          setContainerWidth(width);
         }}
       >
         <Animated.View
           style={[
             styles.highlightBackground,
             {
-              width: containerWidth / activityOptions.length, // 1/3rd of container width
+              width: containerWidth / activityOptions.length,
               transform: [{ translateX: slideAnim }],
             },
           ]}
@@ -141,7 +139,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     bottom: 0,
-    backgroundColor: "#ff7676",
+    backgroundColor: "#F14C6E",
     zIndex: -1,
     borderRadius: 100,
     shadowColor: "#000",

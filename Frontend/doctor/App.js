@@ -9,23 +9,8 @@ import { auth } from "./firebaseConfig";
 import { AppProvider } from "./app/context/AppContext";
 import { ToastBarProvider } from "./app/context/ToastBarContext";
 import { CaloryProvider } from "./app/context/CaloryContext";
-import * as Notifications from "expo-notifications";
 import { UserProvider } from "./app/context/UserContext";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
-const requestPermissions = async () => {
-  const { status } = await Notifications.requestPermissionsAsync();
-  if (status !== "granted") {
-    alert("Permission for notifications is required to receive reminders.");
-  }
-};
 const { width, height } = Dimensions.get("window");
 SplashScreen.preventAutoHideAsync();
 
@@ -39,9 +24,6 @@ export default function App() {
       setAppIsReady(true);
     });
     return () => unsubscribeAuth();
-  }, []);
-  useEffect(() => {
-    requestPermissions();
   }, []);
 
   const onLayoutRootView = useCallback(async () => {

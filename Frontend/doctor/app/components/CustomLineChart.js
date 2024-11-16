@@ -38,7 +38,8 @@ const CustomLineChart = ({
       <LineChart
         areaChart
         curved
-        maxValue={maxValue}
+        maxValue={maxValue + 300}
+        mostNegativeValue={-1}
         data={weeklyIntakeCal}
         data2={weeklyBurnedCal}
         height={chartWidth * 0.4}
@@ -56,17 +57,20 @@ const CustomLineChart = ({
         startFillColor2="#ff7676"
         startOpacity1={0.9}
         startOpacity2={0.5}
-        endOpacity1={0.3}
-        endOpacity2={0.2}
+        endOpacity1={0}
+        endOpacity2={0}
         hideRules
         hideAxesAndRules
+        xAxisLabelsVerticalShift={15}
         xAxisLabelTextStyle={{
           fontSize: 10,
           fontWeight: "bold",
+          left: 3,
         }}
         pointerConfig={{
-          pointerStripColor: "white",
+          pointerStripColor: "lightgrey",
           pointerStripWidth: 2,
+          strokeDashArray: [4, 4],
           pointer2Color: "#ff7676",
           pointer1Color: "#87ceeb",
           radius: 5,
@@ -88,6 +92,7 @@ const CustomLineChart = ({
                   shadowOpacity: 0.2,
                   shadowRadius: 1.41,
                   elevation: 2,
+                  top: 12,
                 }}
               >
                 <Text

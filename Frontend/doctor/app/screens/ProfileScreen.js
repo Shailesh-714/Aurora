@@ -18,22 +18,21 @@ import AgeImg from "../assets/images/icons/age.png";
 import WeightImg from "../assets/images/icons/weight.png";
 import HeightImg from "../assets/images/icons/height.png";
 import LogoutImg from "../assets/images/icons/logout.png";
-import { AppContext } from "../context/AppContext";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useToastBar } from "../context/ToastBarContext";
 import { UserContext } from "../context/UserContext";
+import { AppContext } from "../context/AppContext";
 
 const { width, height } = Dimensions.get("window");
 
 const ProfileScreen = ({ navigation }) => {
   const { userInfo, username, profileImage } = useContext(UserContext);
+  const { healthScore } = useContext(AppContext);
   const { showToastBar } = useToastBar();
-  console.log(userInfo);
   const handleLogout = async () => {
     try {
       await signOut(auth);
-
       showToastBar(
         "Logged Out",
         "You have been logged out of your account!",
@@ -164,7 +163,9 @@ const ProfileScreen = ({ navigation }) => {
                   <Text style={{ fontSize: 15, fontWeight: "bold" }}>
                     Health
                   </Text>
-                  <Text style={{ fontWeight: "500" }}>5 points</Text>
+                  <Text style={{ fontWeight: "500" }}>
+                    {parseFloat(healthScore).toFixed(1)} points
+                  </Text>
                 </View>
               </View>
             </View>

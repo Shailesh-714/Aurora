@@ -12,14 +12,14 @@ export const loginOptionList = [
     id: 1,
     name: "Login",
     icon: require("../assets/images/icons/login.png"),
-    bg: require("../assets/images/backgrounds/loginbg/bg2.png"),
+    bg: require("../assets/images/backgrounds/loginbg/bg1.png"),
     tips: "Get Regular Checkups: Early detection of health issues can lead to more effective treatment.",
   },
   {
     id: 2,
     name: "Register",
     icon: require("../assets/images/icons/register.png"),
-    bg: require("../assets/images/backgrounds/loginbg/bg1.png"),
+    bg: require("../assets/images/backgrounds/loginbg/bg2.png"),
     tips: "Stay Hydrated: Drinking enough water supports digestion, circulation, and temperature regulation.",
   },
 
