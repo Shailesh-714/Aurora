@@ -144,6 +144,7 @@ const LoginScreen = () => {
                     alignSelf: "center",
                     alignItems: "center",
                     opacity: opacityBg,
+                    paddingBottom: height * 0.08,
                   }}
                 >
                   <FontAwesome6
@@ -162,7 +163,6 @@ const LoginScreen = () => {
                   >
                     {item.tips}
                   </Text>
-                  <AntDesign name="minus" size={35} color="black" />
                 </Animated.View>
 
                 {/*login container section */}
