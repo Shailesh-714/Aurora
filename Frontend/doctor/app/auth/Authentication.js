@@ -2,11 +2,9 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup,
   GoogleAuthProvider,
 } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
-import { GoogleOneTapSignInSingleton } from "react-native-google-one-tap-signin/src/GoogleOneTapSignIn";
 
 export const signUp = async (email, password) => {
   try {
@@ -45,18 +43,27 @@ export const login = async (email, password) => {
 };
 
 // export const google = async () => {
-//     const provider = new GoogleAuthProvider();
-//     signInWithPopup(auth, provider)
-//     .then((result) => {
-//       const credential = GoogleAuthProvider.credentialFromResult(result);
-//       const token = credential.accessToken;
-//       const user = result.user;
-//       return { success: `Logged in with Google: ${user.email}` };
-//     }).catch((error) => {
-//       return { error: error.message };
-//     });
-// };
+//   try {
+//     await GoogleSignin.hasPlayServices();
+//     const googleUser = await GoogleSignin.signIn();
 
-export const google = async () => {
-  GoogleOneTapSignInSingleton.signIn();
-};
+//     // Create a credential using the Google ID token
+//     const credential = GoogleAuthProvider.credential(
+//       googleUser.idToken,
+//       googleUser.accessToken
+//     );
+
+//     // Sign in with Firebase using the Google credential
+//     const userCredential = await auth.signInWithCredential(credential);
+//     const user = userCredential.user;
+//     return { success: `Logged in with Google: ${user.email}` };
+//   } catch (error) {
+//     if (error.code === "auth/account-exists-with-different-credential") {
+//       return { error: "Account exists with different credential." };
+//     } else if (error.code === "auth/cancelled-popup-request") {
+//       return { error: "Sign-in process was cancelled." };
+//     } else {
+//       return { error: error.message };
+//     }
+//   }
+// };

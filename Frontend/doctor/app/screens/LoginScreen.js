@@ -57,18 +57,6 @@ const LoginScreen = () => {
       } else if (result.error) {
         showToastBar("Login Error", `${result.error}`, 3000, "red");
       }
-    } else if (action === "Google") {
-      const result = await google();
-      if (result.success) {
-        showToastBar(
-          "SignIn Google",
-          "You have successfully signed into your account",
-          3000,
-          "green"
-        );
-      } else if (result.error) {
-        showToastBar("Google Error", `${result.error}`, 3000, "red");
-      }
     }
   };
 
