@@ -9,7 +9,7 @@ const CustomLineChart = ({
 }) => {
   const { weeklyIntakeCal, weeklyBurnedCal } = useContext(CaloryContext);
   const [chartWidth, setChartWidth] = useState(0);
-  const [maxValue, setMaxValue] = useState(100);
+  const [maxValue, setMaxValue] = useState(300);
   const handleLayout = (event) => {
     const { width } = event.nativeEvent.layout;
     setChartWidth(width);
@@ -38,8 +38,7 @@ const CustomLineChart = ({
       <LineChart
         areaChart
         curved
-        maxValue={maxValue + 300}
-        mostNegativeValue={-1}
+        maxValue={maxValue + 500}
         data={weeklyIntakeCal}
         data2={weeklyBurnedCal}
         height={chartWidth * 0.4}
@@ -61,16 +60,15 @@ const CustomLineChart = ({
         endOpacity2={0}
         hideRules
         hideAxesAndRules
-        xAxisLabelsVerticalShift={15}
         xAxisLabelTextStyle={{
           fontSize: 10,
           fontWeight: "bold",
           left: 3,
         }}
         pointerConfig={{
-          pointerStripColor: "lightgrey",
-          pointerStripWidth: 2,
-          strokeDashArray: [4, 4],
+          pointerStripColor: "black",
+          pointerStripWidth: 1,
+          strokeDashArray: [3, 5],
           pointer2Color: "#ff7676",
           pointer1Color: "#87ceeb",
           radius: 5,
@@ -81,31 +79,6 @@ const CustomLineChart = ({
           pointerLabelComponent: (items) => {
             setSelectedBurnedValue(items[1].value);
             setSelectedIntakeValue(items[0].value);
-            return (
-              <View
-                style={{
-                  backgroundColor: "white",
-                  paddingVertical: 5,
-                  borderRadius: 2,
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 1.41,
-                  elevation: 2,
-                  top: 12,
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 10,
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  {items[0].label}
-                </Text>
-              </View>
-            );
           },
         }}
       />

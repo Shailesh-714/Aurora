@@ -27,12 +27,14 @@ import { AppContext } from "../context/AppContext";
 const { width, height } = Dimensions.get("window");
 
 const ProfileScreen = ({ navigation }) => {
-  const { userInfo, username, profileImage } = useContext(UserContext);
+  const { userInfo, username, profileImage, setProfileImage } =
+    useContext(UserContext);
   const { healthScore } = useContext(AppContext);
   const { showToastBar } = useToastBar();
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      setProfileImage("");
       showToastBar(
         "Logged Out",
         "You have been logged out of your account!",

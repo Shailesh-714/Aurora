@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -9,227 +9,72 @@ import {
 } from "react-native";
 import MyHeader from "../components/tab_bar/MyHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import ActivityBg from "../assets/images/backgrounds/appScreenBg/activity.jpg";
-import { AppContext } from "../context/AppContext";
-import { auth } from "../../firebaseConfig";
 
 const { height } = Dimensions.get("window");
 
 const ActivityScreen = () => {
-  const {
-    water,
-    waterNeed,
-    exerciseHealth,
-    foodHealth,
-    sleep,
-    healthScore,
-    skinHealth,
-    mentalHealth,
-  } = useContext(AppContext);
-
-  const [suggestions, setSuggestions] = useState([]);
-  const [lastGeneratedTimes, setLastGeneratedTimes] = useState({});
-
-  const SUGGESTIONS_KEY = `${auth.currentUser.uid}suggestions`;
-  const TIMES_KEY = "lastGeneratedTimes";
-
-  const saveData = async () => {
-    try {
-      await AsyncStorage.setItem(SUGGESTIONS_KEY, JSON.stringify(suggestions));
-      await AsyncStorage.setItem(TIMES_KEY, JSON.stringify(lastGeneratedTimes));
-    } catch (error) {
-      console.error("Error saving data to AsyncStorage:", error);
-    }
-  };
-
-  const loadData = async () => {
-    try {
-      const storedSuggestions = await AsyncStorage.getItem(SUGGESTIONS_KEY);
-      const storedTimes = await AsyncStorage.getItem(TIMES_KEY);
-
-      if (storedSuggestions) setSuggestions(JSON.parse(storedSuggestions));
-      if (storedTimes) setLastGeneratedTimes(JSON.parse(storedTimes));
-    } catch (error) {
-      console.error("Error loading data from AsyncStorage:", error);
-    }
-  };
-
-  const updateSuggestions = () => {
-    const newSuggestions = [];
-    const currentTime = new Date();
-    const hours = currentTime.getHours();
-
-    const addSuggestion = (key, title, suggestion) => {
-      const lastGenerated = lastGeneratedTimes[key];
-      const timeDiff = lastGenerated
-        ? (currentTime - new Date(lastGenerated)) / (1000 * 60 * 60)
-        : Infinity;
-
-      if (timeDiff >= 2) {
-        newSuggestions.push({
-          title,
-          suggestion,
-          timestamp: currentTime.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-        });
-        setLastGeneratedTimes((prev) => ({ ...prev, [key]: currentTime }));
-      }
-    };
-
-    const waterProgress = (water / waterNeed) * 100;
-    if (hours >= 8 && hours <= 20) {
-      if (waterProgress < 50) {
-        addSuggestion(
-          "hydration",
-          "Hydration Reminder",
-          "Stay hydrated! Drink more water to reach your daily goal."
-        );
-      } else if (waterProgress < 100) {
-        addSuggestion(
-          "hydration",
-          "Hydration Progress",
-          "Great job on drinking water! Keep it up."
-        );
-      } else {
-        addSuggestion(
-          "hydration",
-          "Hydration Goal Met",
-          "You’ve met your water intake goal for today! Good job!"
-        );
-      }
-    }
-
-    // Check exercise
-    if ((hours >= 6 && hours <= 10) || (hours >= 17 && hours <= 20)) {
-      if (exerciseHealth < 0.5) {
-        addSuggestion(
-          "exercise",
-          "Exercise Reminder",
-          "It's a good time for some exercise. A quick walk or stretch can help."
-        );
-      } else if (exerciseHealth < 0.8) {
-        addSuggestion(
-          "exercise",
-          "Keep Exercising",
-          "Keep up the great work with your exercise!"
-        );
-      } else {
-        addSuggestion(
-          "exercise",
-          "Exercise Goal Met",
-          "You've met your exercise goals! Consider some light stretching."
-        );
-      }
-    }
-
-    // Nutrition
-    if (foodHealth < 0.5) {
-      addSuggestion(
-        "nutrition",
-        "Nutrition Reminder",
-        "Consider having a healthy snack to meet your nutrition needs."
-      );
-    } else if (foodHealth < 0.8) {
-      addSuggestion(
-        "nutrition",
-        "Nutrition Progress",
-        "You're on track with your food intake. Keep choosing nutritious options."
-      );
-    } else {
-      addSuggestion(
-        "nutrition",
-        "Nutrition Goal Met",
-        "Excellent nutrition today! You’re meeting your dietary goals."
-      );
-    }
-
-    // Sleep
-    if (hours >= 20) {
-      if (sleep < 6) {
-        addSuggestion(
-          "sleep",
-          "Sleep Reminder",
-          "Consider getting some rest soon for a full night's sleep."
-        );
-      } else if (sleep < 8) {
-        addSuggestion(
-          "sleep",
-          "Sleep Progress",
-          "You're doing well with your sleep, but aim for a bit more rest."
-        );
-      } else {
-        addSuggestion(
-          "sleep",
-          "Sleep Goal Met",
-          "You're well-rested. Keep up the great sleep hygiene!"
-        );
-      }
-    }
-
-    // Health Score
-    if (healthScore < 0.5) {
-      addSuggestion(
-        "healthScore",
-        "Health Score Improvement",
-        "Let’s focus on meeting a few more goals today to boost your health score."
-      );
-    } else if (healthScore < 0.8) {
-      addSuggestion(
-        "healthScore",
-        "Great Health Score",
-        "You're doing well! Keep building on your healthy habits."
-      );
-    } else {
-      addSuggestion(
-        "healthScore",
-        "Health Goal Achieved",
-        "Amazing! You're hitting all your health goals today."
-      );
-    }
-
-    setSuggestions((prevSuggestions) =>
-      newSuggestions.length > 0 ? newSuggestions : prevSuggestions
-    );
-  };
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  useEffect(() => {
-    updateSuggestions();
-    saveData();
-  }, [
-    water,
-    exerciseHealth,
-    foodHealth,
-    sleep,
-    healthScore,
-    skinHealth,
-    mentalHealth,
-  ]);
+  const suggestions = [
+    {
+      title: "Hydration Reminder",
+      suggestion:
+        "Drink a glass of water now to keep your energy up and stay refreshed.",
+      timestamp: "10:00 AM",
+    },
+    {
+      title: "Snack Time",
+      suggestion: "Fuel your body with a small, healthy snack.",
+      timestamp: "11:30 AM",
+    },
+    {
+      title: "Stretch Reminder",
+      suggestion:
+        "Loosen up your muscles, improve your posture, and feel revitalized.",
+      timestamp: "1:00 PM",
+    },
+    {
+      title: "Walk Reminder",
+      suggestion: "Step away from your desk for a short 5-minute walk.",
+      timestamp: "3:00 PM",
+    },
+    {
+      title: "Sleep Reminder",
+      suggestion: "Turn off screens and relax to ensure a peaceful sleep.",
+      timestamp: "9:00 PM",
+    },
+    {
+      title: "Deep Breathing",
+      suggestion:
+        "Pause for a minute and take five deep breaths, can reduce stress and boost mental clarity.",
+      timestamp: "4:00 PM",
+    },
+    {
+      title: "Eye Strain Relief",
+      suggestion:
+        "Look away from your screen and focus on a distant object for 20 seconds to give your eyes a break.",
+      timestamp: "12:00 PM",
+    },
+  ];
 
   return (
     <ImageBackground style={{ flex: 1 }} source={ActivityBg}>
       <SafeAreaView style={styles.container}>
         <MyHeader title="Health Reminders" titleColor="#F14C6E" />
         <ScrollView showsVerticalScrollIndicator={false}>
-          {suggestions.length > 0 ? (
-            suggestions.map((item, index) => (
-              <View key={index} style={styles.notificationItem}>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.suggestion}>{item.suggestion}</Text>
-                <Text style={styles.timestamp}>{item.timestamp}</Text>
-              </View>
-            ))
-          ) : (
-            <View style={styles.noSuggestions}>
-              <Text style={styles.noSuggestionsText}>No suggestions yet!</Text>
+          {suggestions.map((item, index) => (
+            <View key={index} style={styles.notificationItem}>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.suggestion}>{item.suggestion}</Text>
+              <Text style={styles.timestamp}>{item.timestamp}</Text>
             </View>
-          )}
+          ))}
+          <View
+            style={{
+              backgroundColor: "transparent",
+              borderRadius: 20,
+              padding: 60,
+            }}
+          />
         </ScrollView>
       </SafeAreaView>
     </ImageBackground>
@@ -246,6 +91,7 @@ const styles = StyleSheet.create({
   notificationItem: {
     backgroundColor: "#fff",
     padding: 15,
+    paddingBottom: 20,
     borderRadius: 10,
     marginVertical: 10,
     shadowColor: "#000",
@@ -262,11 +108,15 @@ const styles = StyleSheet.create({
   },
   suggestion: {
     fontSize: 14,
-    color: "#666",
+    fontWeight: "500",
+    color: "grey",
     marginTop: 5,
   },
   timestamp: {
-    fontSize: 12,
+    position: "absolute",
+    bottom: "10%",
+    right: "4%",
+    fontSize: 10,
     marginTop: 5,
     fontWeight: "500",
     alignSelf: "flex-end",

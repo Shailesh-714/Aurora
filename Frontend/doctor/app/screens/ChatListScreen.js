@@ -43,6 +43,20 @@ const chatList = [
     description: "Gynaecology Specialist",
     image: "https://randomuser.me/api/portraits/women/0.jpg",
   },
+  {
+    id: "5",
+    name: "Dr. Daniel Harris",
+    value: "orthopedist",
+    description: "Bone and Joint Care Specialist",
+    image: "https://randomuser.me/api/portraits/men/30.jpg",
+  },
+  {
+    id: "6",
+    name: "Dr. Sophia Martinez",
+    value: "ophthalmologist",
+    description: "Eye Care Specialist",
+    image: "https://randomuser.me/api/portraits/women/20.jpg",
+  },
 ];
 
 const ChatListScreen = () => {

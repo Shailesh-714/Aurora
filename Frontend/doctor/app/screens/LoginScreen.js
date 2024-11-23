@@ -57,6 +57,27 @@ const LoginScreen = () => {
       } else if (result.error) {
         showToastBar("Login Error", `${result.error}`, 3000, "red");
       }
+    } else if (action === "Google") {
+      showToastBar(
+        "Sorry!",
+        "This login method is not currently enabled",
+        3000,
+        "#eed202"
+      );
+    } else if (action === "Facebook") {
+      showToastBar(
+        "Sorry!",
+        "This login method is not currently enabled",
+        3000,
+        "#eed202"
+      );
+    } else if (action === "Twitter X") {
+      showToastBar(
+        "Sorry!",
+        "This login method is not currently enabled",
+        3000,
+        "#eed202"
+      );
     }
   };
 

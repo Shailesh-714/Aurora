@@ -60,76 +60,46 @@ const AppProvider = ({ children }) => {
     setHealthScore(0);
   };
 
-  const checkForNewDay = () => {
-    const today = new Date().toDateString();
-    if (lastResetDate !== today) {
-      resetData();
-      setLastResetDate(today);
-    }
-  };
-
-  useEffect(() => {
-    checkForNewDay();
-  }, [lastResetDate]);
-  const calculateBMR = (weight, height, age, gender) => {
-    if (gender.toLowerCase() === "male") {
-      return 10 * weight + 6.25 * height - 5 * age + 5;
-    } else {
-      return 10 * weight + 6.25 * height - 5 * age - 161;
-    }
-  };
-
-  const calculateDailyNeeds = () => {
-    const { weight, height, age, gender } = userInfo;
-    if (weight > 0 && height > 0 && age > 0 && gender) {
-      const bmr = calculateBMR(weight, height, age, gender);
-      const tdee = (bmr * activityFactor).toFixed(0);
-
-      setCalNeed(tdee);
-      setProteinNeed((tdee * 0.2) / 4);
-      setFatNeed((tdee * 0.3) / 9);
-      setCarbNeed((tdee - tdee * 0.2 - tdee * 0.3) / 4);
-      setFiberNeed(30);
-
-      const dailyWaterInMl = bmr;
-      const glassesOfWater = Math.ceil(dailyWaterInMl / 250);
-      setWaterNeed(glassesOfWater);
-    }
-  };
-
   // Load data from Firestore
   const loadStoredData = async () => {
     const currentUserId = auth.currentUser ? auth.currentUser.uid : "";
     if (currentUserId) {
       const userDocRef = doc(db, "user_data", currentUserId);
+      const today = new Date().toDateString();
       try {
         const docSnap = await getDoc(userDocRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setLastResetDate(data.lastResetDate || new Date().toDateString());
-          setActivityFactor(data.activityFactor || 1.55);
-          setExerData(data.exerData || { calories: 0, minutes: 0 });
-          setFoodData(
-            data.foodData || {
-              calories: 0,
-              protein: 0,
-              fat: 0,
-              carbs: 0,
-              fiber: 0,
-            }
-          );
-          setWater(data.water || 0);
-          setSleep(data.sleep || 0);
-          setMeditation(data.meditation || 0);
-          setFoodHealth(data.foodHealth || 0);
-          setExerciseHealth(data.exerciseHealth || 0);
-          setSkinHealth(data.skinHealth || 0);
-          setMentalHealth(data.mentalHealth || 0);
-          setHealthScore(data.healthScore || 0);
+          if (today === data.lastResetDate) {
+            setLastResetDate(data.lastResetDate || new Date().toDateString());
+            setActivityFactor(data.activityFactor || 1.55);
+            setExerData(data.exerData || { calories: 0, minutes: 0 });
+            setFoodData(
+              data.foodData || {
+                calories: 0,
+                protein: 0,
+                fat: 0,
+                carbs: 0,
+                fiber: 0,
+              }
+            );
+            setWater(data.water || 0);
+            setSleep(data.sleep || 0);
+            setMeditation(data.meditation || 0);
+            setFoodHealth(data.foodHealth || 0);
+            setExerciseHealth(data.exerciseHealth || 0);
+            setSkinHealth(data.skinHealth || 0);
+            setMentalHealth(data.mentalHealth || 0);
+            setHealthScore(data.healthScore || 0);
+          } else {
+            resetData();
+            setLastResetDate(today);
+          }
         }
-        setDataLoaded(true);
       } catch (error) {
         console.error("Error retrieving data from Firestore:", error);
+      } finally {
+        setDataLoaded(true);
       }
     }
   };
@@ -137,7 +107,8 @@ const AppProvider = ({ children }) => {
   // Store data to Firestore
   const storeData = async () => {
     const currentUserId = auth.currentUser ? auth.currentUser.uid : "";
-    if (currentUserId && dataLoaded) {
+    const today = new Date().toDateString();
+    if (currentUserId && dataLoaded && today === lastResetDate) {
       const userDocRef = doc(db, "user_data", currentUserId);
       try {
         await setDoc(
@@ -161,6 +132,8 @@ const AppProvider = ({ children }) => {
       } catch (error) {
         console.error("Error saving data to Firestore:", error);
       }
+    } else {
+      loadStoredData();
     }
   };
 
@@ -189,30 +162,36 @@ const AppProvider = ({ children }) => {
   // Load new user's data from Firestore
   const loadNewUserData = async (userId) => {
     const userDocRef = doc(db, "user_data", userId);
+    const today = new Date().toDateString();
     try {
       const docSnap = await getDoc(userDocRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setLastResetDate(data.lastResetDate || new Date().toDateString());
-        setActivityFactor(data.activityFactor || 1.55);
-        setExerData(data.exerData || { calories: 0, minutes: 0 });
-        setFoodData(
-          data.foodData || {
-            calories: 0,
-            protein: 0,
-            fat: 0,
-            carbs: 0,
-            fiber: 0,
-          }
-        );
-        setWater(data.water || 0);
-        setSleep(data.sleep || 0);
-        setMeditation(data.meditation || 0);
-        setFoodHealth(data.foodHealth || 0);
-        setExerciseHealth(data.exerciseHealth || 0);
-        setSkinHealth(data.skinHealth || 0);
-        setMentalHealth(data.mentalHealth || 0);
-        setHealthScore(data.healthScore || 0);
+        if (today === data.lastResetDate) {
+          setLastResetDate(data.lastResetDate || new Date().toDateString());
+          setActivityFactor(data.activityFactor || 1.55);
+          setExerData(data.exerData || { calories: 0, minutes: 0 });
+          setFoodData(
+            data.foodData || {
+              calories: 0,
+              protein: 0,
+              fat: 0,
+              carbs: 0,
+              fiber: 0,
+            }
+          );
+          setWater(data.water || 0);
+          setSleep(data.sleep || 0);
+          setMeditation(data.meditation || 0);
+          setFoodHealth(data.foodHealth || 0);
+          setExerciseHealth(data.exerciseHealth || 0);
+          setSkinHealth(data.skinHealth || 0);
+          setMentalHealth(data.mentalHealth || 0);
+          setHealthScore(data.healthScore || 0);
+        } else {
+          resetData();
+          setLastResetDate(today);
+        }
       }
     } catch (error) {
       console.error("Error retrieving data from Firestore:", error);
@@ -231,6 +210,32 @@ const AppProvider = ({ children }) => {
 
     return () => unsubscribe();
   }, []);
+
+  const calculateBMR = (weight, height, age, gender) => {
+    if (gender.toLowerCase() === "male") {
+      return 10 * weight + 6.25 * height - 5 * age + 5;
+    } else {
+      return 10 * weight + 6.25 * height - 5 * age - 161;
+    }
+  };
+
+  const calculateDailyNeeds = () => {
+    const { weight, height, age, gender } = userInfo;
+    if (weight > 0 && height > 0 && age > 0 && gender) {
+      const bmr = calculateBMR(weight, height, age, gender);
+      const tdee = (bmr * activityFactor).toFixed(0);
+
+      setCalNeed(tdee);
+      setProteinNeed((tdee * 0.2) / 4);
+      setFatNeed((tdee * 0.3) / 9);
+      setCarbNeed((tdee - tdee * 0.2 - tdee * 0.3) / 4);
+      setFiberNeed(30);
+
+      const dailyWaterInMl = bmr;
+      const glassesOfWater = Math.ceil(dailyWaterInMl / 250);
+      setWaterNeed(glassesOfWater);
+    }
+  };
 
   useEffect(() => {
     if (
